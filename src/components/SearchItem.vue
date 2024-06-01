@@ -13,7 +13,7 @@ export default{
     <body>
         <div>
             <span>搜尋問卷</span>
-            <input type="text" placeholder="請輸入問卷名稱">
+            <input type="search" placeholder="請輸入問卷名稱">
     </div>
         <div>
             <span>開始時間</span>

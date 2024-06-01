@@ -9,6 +9,7 @@ import HelloWorld from './components/HelloWorld.vue'
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/mainPage">Main Page</RouterLink>
+        <RouterLink to="/addQuiz">Add Quiz</RouterLink>
       </nav>
   </header>
 
@@ -22,18 +23,13 @@ import HelloWorld from './components/HelloWorld.vue'
     box-sizing: border-box;
 }
 
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-  width: 20dvw;
-}
-
 
 nav {
   width: 20dvw;
   height: 100dvh;
   text-align: center;
-
+  position: relative;
+  left: 0;
   background: gray;
 }
 
