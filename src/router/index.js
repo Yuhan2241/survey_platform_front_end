@@ -18,9 +18,9 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/mainPage',
-      name: 'mainPage',
-      component: () => import('../views/MainPage.vue')
+      path: '/backEndPage',
+      name: 'backEndPage',
+      component: () => import('../views/BackEndPage.vue')
     },
     {
       path: '/addQuiz',
