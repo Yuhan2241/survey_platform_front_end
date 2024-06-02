@@ -8,7 +8,7 @@ import HelloWorld from './components/HelloWorld.vue'
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/mainPage">Main Page</RouterLink>
+        <RouterLink to="/backEndPage">Back End Page</RouterLink>
         <RouterLink to="/addQuiz">Add Quiz</RouterLink>
       </nav>
   </header>
@@ -25,7 +25,7 @@ import HelloWorld from './components/HelloWorld.vue'
 
 
 nav {
-  width: 20dvw;
+  width: 15dvw;
   height: 100dvh;
   text-align: center;
   position: relative;
@@ -42,7 +42,7 @@ nav a.router-link-exact-active:hover {
 }
 
 nav a {
-  display: inline-block;
+  display: block;
   padding: 0 1rem;
   border-left: 1px solid var(--color-border);
 }
