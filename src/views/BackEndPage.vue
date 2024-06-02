@@ -19,6 +19,8 @@ import quizList from '../components/QuizList.vue'
 <style scoped>
 body{
     display: block;
+    width: 100dvw;
+    padding: 5% 7%;
 }
 .search{
     height: 20vh;
