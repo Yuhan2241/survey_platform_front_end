@@ -9,22 +9,21 @@ export default{
 </script>
 
 <template>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <body>
+    <div class="search container">
         <div>
             <span>搜尋問卷</span>
-            <input type="search" placeholder="請輸入問卷名稱">
-    </div>
-        <div>
+            <input type="search" class="input" placeholder="請輸入問卷名稱">
+        </div>
+        <div >
             <span>開始時間</span>
-            <input type="date" name="" id="">
+            <input type="date" class="input" name="" id="">
 
             <span> ~ 結束時間</span>
-            <input type="date" name="" id="">
+            <input type="date" class="input" name="" id="">
             
+            <button type="submit" class="btn"><img src="./svg/search.svg" alt=""></button>
         </div>
-        <button type="submit"><img src="./svg/search.svg" alt="">搜尋</button>
-    </body>
+    </div>
         
     
 
@@ -36,13 +35,13 @@ export default{
     margin: 0;
     box-sizing: border-box;
 }
-body{
-    width: 100dvw;
-    height: 10dvh;
-    border: 2px solid black;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
+// .search{
+//     height: 20vh;
+//     border: 2px solid black;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: start;
+//     justify-content: center;
+//     padding: 5%;
+// }
 </style>

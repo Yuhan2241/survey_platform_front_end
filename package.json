@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "sass": "^1.77.4",
+    "sortablejs": "^1.15.2",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
+    "@types/sortablejs": "^1.15.8",
     "@vitejs/plugin-vue": "^5.0.4",
     "vite": "^5.2.8"
   }

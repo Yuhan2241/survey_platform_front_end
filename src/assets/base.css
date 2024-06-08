@@ -1,61 +1,40 @@
+@import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+  --white: #ffffff;
+  --yellow: #F2CD60;
+  --orange: #FF8552;
+  --red: #F25757;
+  --purple: #B18FCF;
+  --blue-light: #61E8E1;
+  --blue: #86BBD8;
+  --blue-light-soft: #61e8e12d;
+  --blue-medium: #33658A;
+  --blue-dark: #1F363D;
+  --green:#67E0A3;
 
+  --grey-soft : #e6e6e6;
   --vt-c-black: #181818;
   --vt-c-black-soft: #222222;
   --vt-c-black-mute: #282828;
 
-  --vt-c-indigo: #2c3e50;
-
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
-
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
-}
+} 
 
 /* semantic color variables for this project */
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  --color-background: var(--blue-light-soft);
+  
+  --color-text: #56545a;
+  --color-text-light: #ffffff;
 
   --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-}
+} 
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   margin: 0;
-  font-weight: normal;
 }
 
 body {
@@ -67,20 +46,74 @@ body {
     background-color 0.5s;
   line-height: 1.6;
   font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
+    'cwTeXYen',
     'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
     'Fira Sans',
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
+  font-size: 18px;
+  font-weight: 600;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  height: auto;
+  width: 100dvw;
+  display: flex;
+  flex-direction: column;
+}
+
+nav {
+  width: 15dvw;
+  height: 100dvh;
+  text-align: center;
+  position: fixed;
+  left: 0;
+  background: var(--blue-dark);
+}
+
+.container{
+  border: 1px solid black;
+  background-color: #ffff;
+  width: 65vw;
+  height: auto;
+  margin: 0;
+  padding: 5%;
+}
+
+.btn{
+  width: 100px;
+  height: 45px;
+  border: none;
+  border-radius: 10px;
+  /* box-shadow: 1px 1px 2px var(--blue-light); */
+  background-color: var(--grey-soft);
+  margin: auto;
+}
+.btn:hover{
+  cursor: pointer;
+}
+.btn:active{
+  scale: 0.95;
+}
+.btn-submit{
+  background-color: var(--blue-medium);
+  color: white;
+}
+.input{
+  width: 20vw;
+  height: 35px;
+  border-radius: 5px;
+}
+.table{
+  width: 100%;
+  text-align: center;
+}
+.tr:hover{
+  background-color: var(--blue-light-soft);
+}
+.tr-first{
+  background-color: var(--blue);
+  color: #fff;
 }
