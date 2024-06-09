@@ -55,17 +55,14 @@ body {
   font-size: 18px;
   font-weight: 600;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   display: flex;
   height: auto;
   width: 100dvw;
-  display: flex;
   flex-direction: column;
 }
 
 nav {
-  width: 15dvw;
+  width: 15vw;
   height: 100dvh;
   text-align: center;
   position: fixed;
@@ -84,7 +81,7 @@ nav {
 
 .btn{
   width: 100px;
-  height: 45px;
+  height: 40px;
   border: none;
   border-radius: 10px;
   /* box-shadow: 1px 1px 2px var(--blue-light); */
@@ -116,4 +113,8 @@ nav {
 .tr-first{
   background-color: var(--blue);
   color: #fff;
+}
+
+.pages{
+  color: #181818;
 }

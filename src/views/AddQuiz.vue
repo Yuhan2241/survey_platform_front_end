@@ -20,7 +20,10 @@ export default{
                 type : "",
                 isRequired : false
             },
-            editItem:[]
+            //正在編輯的題目
+            editItem:[],
+            //現在時間
+            currentTime: new Date()
         }
 
     },
@@ -120,7 +123,7 @@ export default{
                 <input class="input" type="text" v-model="name" placeholder="請輸入問卷標題" id="quizTitle" required>
                 <label for="quizDetail"><li>問卷說明</li></label>
                 <textarea class="" v-model="description" placeholder="請輸入問卷說明" id="quizDetail" required></textarea>
-                <li>開始時間</li>
+                <li>開始時間(需為今日以後)</li>
                 <input class="input" v-model="startDate" type="date" required>
                 <li>結束時間</li>
                 <input class="input" v-model="endDate" type="date" required>
