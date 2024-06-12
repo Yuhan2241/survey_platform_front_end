@@ -24,14 +24,20 @@ const router = createRouter({
     },
     {
       path: '/addQuiz',
-      name: 'addQuiz',
-      component: () => import('../views/AddQuiz.vue')
+      name: 'addOrEditQuiz',
+      component: () => import('../components/AddOrEditQuiz.vue')
+    },
+    {
+      path: '/editQuiz/:id?',
+      name: 'addOrEditQuiz',
+      component: () => import('../components/AddOrEditQuiz.vue')
     },
     {
       path: '/quizReview',
       name: 'quizReview',
-      component: () => import('../views/QuizReview.vue')
-    }
+      component: () => import('../components/QuizReview.vue')
+    },
+        
   ]
 })
 

@@ -1,8 +1,8 @@
 <script>
+import ShowFeedback from '@/components/ShowFeedback.vue'
 export default{
     data(){
         return{
-            
             changeForm:"quizContext",
             //問卷內容
             name: "",
@@ -11,26 +11,47 @@ export default{
             endDate : "",
             questionList : [],
             isPublished : false,
-            qid:0,
+            qid:1,
 
             question:{
-                id : 0,
+                id : 1,
                 title : "",
                 options : "",
                 type : "",
                 isRequired : false
             },
+            types: ["單選題", "多選題", "簡述題"],
             //正在編輯的題目
             editItem:[],
             //現在時間
             currentTime: new Date()
         }
-
     },
-    computed:{
-        
+    created(){
+        this.quizId = this.$route.params.id
+        this.getQuiz()
     },
     methods:{
+        //取得問卷
+        getQuiz(){
+            let Obj={
+                quizId : this.quizId
+            }
+            fetch("http://localhost:8080/quiz/search",{
+                method:'POST',
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(Obj)
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.quizList = data.quizList
+                // this.quizList.startDate = new Date(this.quizList.startDate)
+                // this.quizList.endDate = new Date(this.quizList.endDate)
+                console.log(this.quizList)
+            })
+        },
         //建立問卷
         create(){
             let createObj = {
@@ -46,15 +67,13 @@ export default{
                 headers:{
                     "Content-Type":"application/json" //傳送的請求格式
                 },
-                body:JSON.stringify(createObj) //傳送過去的資料
+                body:JSON.stringify(createObj) //傳送過去的物件
             })
             .then(res => res.json())
             .then(data => {
                 console.log(data)
             })
         },
-
-        
         showFeedback(){
             let Obj = {
                 quizId : this.quizId
@@ -68,24 +87,24 @@ export default{
             })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
+                // console.log(data)
             })
         },
         //加入問題
         addQuestion() {
-        let newQuestion = {...this.question}
-        newQuestion.id = this.questionList.length 
-        this.questionList.push(newQuestion)
-        this.question = {
-            title : "",
-            options : "",
-            type : "",
-            isRequired : false
-        }
+            let newQuestion = {...this.question}
+            newQuestion.id = this.questionList.length +1
+            this.questionList.push(newQuestion)
+            this.question = {
+                title : "",
+                options : "",
+                type : "",
+                isRequired : false
+            }
         },
         //移除問題
         removeQuestion(questionId){
-            let index = this.questionList.findIndex(q => q.id === questionId)
+            let index = this.questionList.findIndex(q => q.id-1 === questionId-1)
             if(index != -1){
                 this.questionList.splice(index, 1)
             }
@@ -101,9 +120,11 @@ export default{
         },
         //編輯完畢
         updateEdit(){
+            
+        },
+        
+    },
 
-        }
-    }
 }
 </script>
 
@@ -123,42 +144,23 @@ export default{
                 <input class="input" type="text" v-model="name" placeholder="請輸入問卷標題" id="quizTitle" required>
                 <label for="quizDetail"><li>問卷說明</li></label>
                 <textarea class="" v-model="description" placeholder="請輸入問卷說明" id="quizDetail" required></textarea>
-                <li>開始時間(需為今日以後)</li>
+                <li>開始時間(須為今日之後)</li>
                 <input class="input" v-model="startDate" type="date" required>
                 <li>結束時間</li>
                 <input class="input" v-model="endDate" type="date" required>
             </ul>
         </div>
-        <div class="response" v-show="changeForm == 'response'">
-            <table class="table" >
-                <tr class="tr-first">
-                    <td><input type="checkbox"></td>
-                    <td>編號</td>
-                    <td>姓名</td>
-                    <td>填答時間</td>
-                    <td>填答內容</td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td>1</td>
-                    <td>TANAKA</td>
-                    <td>2024-06-20 23:09</td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
+        <ShowFeedback v-show="changeForm == 'response'" @click="showFeedback()"></ShowFeedback>
         <div class="statistics" v-show="changeForm == 'statistics'">
         </div>
     </div>
     <div class="container" v-show="changeForm == 'quizContext'">
-            <div class="questions context" >
+        <div class="questions context" >
             <ul>
                 <label for="quesTitle" required><li>編輯題目</li></label>
                 <input class="input" type="text" v-model="question.title" id="quesTitle">
-                <select v-model="question.type" name="quesType" id="quesType" selected>
-                    <option value="單選題">單選題</option>
-                    <option value="多選題">多選題</option>
-                    <option value="簡述題">簡述題</option>
+                <select v-model="question.type" name="quesType" id="quesType">
+                    <option v-for="option in types" :value="option" :key="option">{{ option }}</option>
                 </select>
                 <input type="checkbox" v-model="question.isRequired" id="isRequired">
                 <label for="isRequired" >必填</label>
@@ -178,13 +180,17 @@ export default{
                     
                         <tr v-for="q in questionList" :key="q.id">
                             <!-- <td><input type="checkbox"></td> -->
-                            <td>{{q.id+1}}</td>
+                            <td>{{q.id}}</td>
                             <td>{{q.title}}</td>
                             <td>{{q.type}}</td>
                             <td v-if="q.isRequired">必填</td>
                             <td v-else></td>
-                            <td><button type="button" @click="removeQuestion(q.id)"><img src="@/components/svg/delete.svg" alt=""></button>
-                            <button type="button" @click="editQuestion(q.id)"><img src="@/components/svg/edit.svg" alt=""></button></td>
+                            <td>
+                                <!-- 刪除問題 -->
+                                <button type="button" @click="removeQuestion(q.id)"><img src="@/components/svg/delete.svg" alt=""></button>
+                                <!-- 編輯問題 -->
+                                <button type="button" @click="editQuestion(q.id)"><img src="@/components/svg/edit.svg" alt=""></button>
+                            </td>
                         </tr>
                     
                 </table>
@@ -208,7 +214,7 @@ export default{
         </div>
             <button class="btn">取消</button>
             <button class="btn" @click="create()">儲存修改</button>
-            <RouterLink to="/quizReview"><button class="btn btn-submit" @click="create()">問卷預覽</button></RouterLink>
+            <RouterLink to="/quizReview"><button class="btn btn-submit">問卷預覽</button></RouterLink>
     </div>
         
         
@@ -228,14 +234,15 @@ export default{
     .label{
         border-radius: 5px 20px 0 0;
         background: #86BBD8;
-        margin: 0 1px;
+        margin-right:  1px;
         padding: 10px 3%;
-        
+        color: #fff;
         display: inline-block;
     }
     .checked{
         background: #fff;
         border-bottom: none;
+        color: var(--color-text);
     }
 }
 textarea{
