@@ -7,14 +7,14 @@ import HelloWorld from './components/HelloWorld.vue'
   <header>
     <nav>
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-      <RouterLink to="/backEndPage">Back End Page</RouterLink>
-      <RouterLink to="/addQuiz">Add Quiz</RouterLink>
+      <RouterLink to="/backEndPage">後台首頁</RouterLink>
+      <RouterLink to="/editQuiz">新增問卷</RouterLink>
+      <RouterLink to="/quizPage">問卷</RouterLink>
     </nav>
     
   </header>
 <div class="right">
-  <RouterView />
+  <RouterView :key="$route.fullPath"/>
 </div>
 </template>
 
@@ -34,12 +34,13 @@ import HelloWorld from './components/HelloWorld.vue'
 
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: var(--black);
   background-color: var(--blue);
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+nav a:hover {
+  color: var(--color-text);
+  background-color: var(--blue);
 }
 
 nav a {

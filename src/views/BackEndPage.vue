@@ -1,5 +1,4 @@
 <script setup>
-import searchItem from '../components/SearchItem.vue'
 import quizList from '../components/QuizList.vue'
 </script>
 

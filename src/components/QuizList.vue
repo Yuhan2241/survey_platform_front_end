@@ -181,7 +181,7 @@ export default{
                 <tr class="tr" v-for="quiz in filteAndPaginateQuiz" :key="quiz.id">
                     <td><input type="checkbox"></td>
                     <td>{{ quiz.id }}</td>
-                    <td><router-link :to="`/editQuiz/${quiz.id}`" class="link-text">{{ quiz.name }}</router-link></td>
+                    <td><router-link :to="`/QuizPage/${quiz.id}`" class="link-text">{{ quiz.name }}</router-link></td>
                     <td>
                         <span :class="quizStatus(quiz).class" class="status">{{ quizStatus(quiz).status}}</span> 
                         <span v-if="quizStatus(quiz).days">{{ quizStatus(quiz).days}}</span>

@@ -10,32 +10,26 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    },
-    {
       path: '/backEndPage',
       name: 'backEndPage',
       component: () => import('../views/BackEndPage.vue')
     },
     {
-      path: '/addQuiz',
-      name: 'addOrEditQuiz',
-      component: () => import('../components/AddOrEditQuiz.vue')
-    },
-    {
       path: '/editQuiz/:id?',
       name: 'addOrEditQuiz',
+      props:true,
       component: () => import('../components/AddOrEditQuiz.vue')
     },
     {
-      path: '/quizReview',
-      name: 'quizReview',
-      component: () => import('../components/QuizReview.vue')
+      path: '/quizPage/:id?',
+      name: 'quizPage',
+      component: () => import('../views/QuizPage.vue')
+    },
+    {
+      path: '/showFeedback/:id',
+      name: 'showFeedback',
+      props:true,
+      component: () => import('../components/ShowFeedback.vue')
     },
         
   ]
