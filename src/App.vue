@@ -7,7 +7,7 @@ import HelloWorld from './components/HelloWorld.vue'
   <header>
     <nav>
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/backEndPage">後台首頁</RouterLink>
+      <RouterLink to="/backEndPage" :key="$route.fullPath">後台首頁</RouterLink>
       <RouterLink to="/editQuiz">新增問卷</RouterLink>
       <RouterLink to="/quizPage">問卷</RouterLink>
     </nav>

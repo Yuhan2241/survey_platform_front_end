@@ -10,7 +10,9 @@ export default{
     },
     created(){
         this.showFeedback()
-    }, 
+    },
+    computed(){
+    },
     methods:{
         showFeedback(){
             let Obj = {
@@ -45,15 +47,16 @@ export default{
                     <td>填答內容</td>
                 </tr>
                 </thead>
-                <tbody v-if="feedbackList > 0">
+                <span v-if="feedbackList == ''">尚無回覆</span>
+                <tbody v-else>
                     <tr v-for="feedback in feedbackList" :key="feedback.fillinDateTime">
-                        <td>{{feedback.id}}</td>
-                        <td>TANAKA{{ description }}</td>
-                        <td>2024-06-20 23:09</td>
+                        <td>{{}}</td>
+                        <td>{{ feedback.userName }}</td>
+                        <td>{{ feedback.fillinDateTime.replace("T",", ") }}</td>
                         <td><a href=""><img src="./svg/watch.svg" alt=""></a></td>
                     </tr>
                 </tbody>
-                <span v-else>尚無回覆</span>
+                
             </table>
             <span>{{ feedbackList }}</span>
         </div>

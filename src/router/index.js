@@ -26,6 +26,12 @@ const router = createRouter({
       component: () => import('../views/QuizPage.vue')
     },
     {
+      path: '/quizPreview/:id?',
+      name: 'quizPreview',
+      props:true,
+      component: () => import('../components/QuizPreview.vue')
+    },
+    {
       path: '/showFeedback/:id',
       name: 'showFeedback',
       props:true,

@@ -1,7 +1,7 @@
 <script>
 import AddOrEditQuizVue from '@/components/AddOrEditQuiz.vue'
 import ShowFeedback from '@/components/ShowFeedback.vue';
-import QuizReview from '@/components/QuizReview.vue';
+import QuizReview from '@/components/QuizPreview.vue';
 import Statistics from '@/components/Statistics.vue';
 export default{
     data(){
@@ -31,22 +31,22 @@ export default{
             currentTime: new Date()
         }
     },
-    created(){
-        if (this.$route.params.id) {
-            // this.quizId = this.$route.params.id
-        this.getQuiz
-        this.showFeedback
-        }else {
-            // 如果沒有id就初始化一個新的問卷物件
-            this.quiz = {
-                id: 1,
-                title: "",
-                options: "",
-                type: "",
-                is_required: false
-            }
-        }
-    },
+    // created(){
+    //     if (this.$route.params.id) {
+    //         // this.quizId = this.$route.params.id
+    //     this.getQuiz
+    //     this.showFeedback
+    //     }else {
+    //         // 如果沒有id就初始化一個新的問卷物件
+    //         this.quiz = {
+    //             id: 1,
+    //             title: "",
+    //             options: "",
+    //             type: "",
+    //             is_required: false
+    //         }
+    //     }
+    // },
     methods:{
     },
     components:{
@@ -75,7 +75,7 @@ export default{
     <div v-show="changeForm == 'response'">
         <ShowFeedback/>
     </div>
-    <div v-show="changeForm == 'statistics'">
+    <div v-show="changeForm == 'statistics'" class="container">
         <Statistics/>
     </div>
 </template>

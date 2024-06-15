@@ -1,5 +1,6 @@
 <script>
 import Swal from 'sweetalert2'
+import QuizPreview from './QuizPreview.vue';
 
 // import { useQuizStore } from '../stores/QuizStore'
 export default{
@@ -16,6 +17,7 @@ export default{
             questionList : [],
             isPublished : false,
             qid:1,
+            
 
             question:{
                 id : 1,
@@ -29,8 +31,14 @@ export default{
             editItem:[],
             showEditItem: false,
             //現在時間
-            currentTime: new Date()
+            currentTime: new Date(),
+            preview:false,
+            statusCode:'',
+            previewVisible: false,
         }
+    },
+    components:{
+        QuizPreview
     },
     created(){
         if (this.$route.params.id) {
@@ -62,6 +70,7 @@ export default{
             })
             .then(res => res.json())
             .then(data => {
+                this.statusCode = data.statusCode
                 let quizList = data.quizList[0]
                 this.name = quizList.name
                 this.description = quizList.description
@@ -81,7 +90,7 @@ export default{
                 "start_date" : this.startDate,
                 "end_date" : this.endDate,
                 "question_list" : this.questionList,
-                "is_published" : false
+                "is_published" : ''
             }
             fetch("http://localhost:8080/quiz/create_update",{ //後端設定的地址
                 method:'POST', //方法
@@ -130,11 +139,33 @@ export default{
                 this.questionList.splice(this.editItem.id-1, 1, this.editItem)
             }
         },
+        //讓編輯區域可視化
         editItemVisible(){
             this.showEditItem = !this.showEditItem
         },
-        saveMsg(){
-            Swal.fire("儲存成功!")
+        //讓預覽區域可視化
+        showPreview(){
+            this.previewVisible = !this.previewVisible
+        },
+        //修改問卷彈出訊息
+        saveQuiz(){
+            if(this.statusCode == 200){
+                Swal.fire("修改成功!")
+                }else{
+                Swal.fire("失敗，請再試一次!")
+            }
+            this.statusCode = ""
+        },
+        //發布問卷
+        publishQuiz(){
+            this.isPublished = true
+            this.create()
+            if(this.statusCode == 200){ //根據回傳狀態碼彈出訊息
+                Swal.fire("發布成功!")
+                }else{
+                Swal.fire("發布失敗，請再試一次!")
+            }
+            this.statusCode = ""
         }
     },
     
@@ -150,7 +181,8 @@ export default{
         <router-link :to="`/statistics/${quizId}`"><label for="statistics">統計</label></router-link>
         <input type="radio" v-model="changeForm" value="statistics" id="statistics" >
     </div> -->
-    <div class="container">
+    <div v-if="previewVisible">
+    <div  class="container">
         <div class="quizSubject context" v-show="changeForm == 'quizContext'">
             <ul>
                 <label for="quizTitle"><li>問卷名稱</li></label>
@@ -224,14 +256,14 @@ export default{
             </ul>
             
         </div>
-            <button class="btn">取消</button>
-            <button class="btn" @click="create(),saveMsg()">儲存修改</button>
-            <button class="btn btn-submit" >問卷預覽</button>
+            <router-link to="/backEndPage"><button class="btn">取消</button></router-link>
+            <button class="btn" @click="create(),saveQuiz()">儲存修改</button>
+            <button class="btn btn-submit" @click="showPreview()">問卷預覽</button>
     </div>
-        
-        
-
-
+</div>
+    <div v-else>
+        <QuizPreview  @backToEdit="showPreview() " @publishQuiz="publishQuiz()" :quizData="$data"/>
+    </div>
 </template>
 
 <style scoped lang="scss">
