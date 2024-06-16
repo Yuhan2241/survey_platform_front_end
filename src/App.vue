@@ -1,15 +1,14 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
   <header>
     <nav>
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/backEndPage" :key="$route.fullPath">後台首頁</RouterLink>
-      <RouterLink to="/editQuiz">新增問卷</RouterLink>
-      <RouterLink to="/quizPage">問卷</RouterLink>
+      <RouterLink to="/frontPage" :key="$route.fullPath">前台首頁</RouterLink>
+      <RouterLink to="/manageQuizPage" :key="$route.fullPath">後台首頁</RouterLink>
+      <RouterLink to="/addQuiz">新增問卷</RouterLink>
     </nav>
     
   </header>

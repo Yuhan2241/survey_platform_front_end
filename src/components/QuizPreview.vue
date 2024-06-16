@@ -2,39 +2,54 @@
 export default{
     data() {
         return {
-            quiz: this.quizData,
-            questionList: this.questionList
+            quiz: {},
+            questionList: {},
+
         };
     },
     props:[
-        'quizData','questionList','feedbackData'
+        'quizData', //問卷資料from AddOrEditQuiz
+        'questions', //問題列表from AddOrEditQuiz
+        // 'fillinData' //填答內容(1筆)from ShowFeedback
     ],
-    watch:{
-        quizData(newVal) {
-            this.quiz = newVal;
-        },
-        questionList(newVal) {
-            this.questionList = newVal;
-        }
-    }
+    emits: ['backToEdit', 'publishQuiz'],
+    created(){
+        this.quiz = {...this.quizData},
+        this.questionList = {...this.questions}
+        // this.fillin = this.fillinData
+    },
+    // watch:{
+    //     quizData(newVal) {
+    //         this.quiz = newVal;
+    //     },
+    //     questionList(newVal) {
+    //         this.questionList = newVal;
+    //     },
+    // fillinData(newVal) {
+    // this.fillin = newVal;
+    // }
+    // },
+    
 }
 
 </script>
 <template>
-    <div class="container">
+    {{ quiz }}
+
+    <div class="container preview">
         <span>{{ quiz.startDate +"~"+ quiz.endDate }}</span>
         <h1>{{ quiz.name }}</h1>
         <p>問卷描述: {{ quiz.description }}</p>
         <div>
             <ul>
                 <label for="userName"><li>姓名</li></label>
-                <input type="text" class="input" id="userName" required>
+                <input type="text"  class="input" id="userName" required readonly>
                 <label for="phone"><li>手機</li></label>
-                <input type="text" class="input" id="phone" required>
+                <input type="text" class="input" id="phone" required readonly>
                 <label for="email"><li>Email</li></label>
-                <input type="email" class="input" id="email">
+                <input type="email" class="input" id="email" readonly>
                 <label for="age"><li>年齡</li></label>
-                <input type="number" class="input" id="age">
+                <input type="number" class="input" id="age" readonly>
             </ul>
         </div>
         <div v-for="(question, index) in questionList" :key="index">
@@ -60,9 +75,9 @@ export default{
 </template>
 
 <style scoped>
-.container{
+/* .preview{
     position: absolute;
     top: 0;
     z-index: 2;
-}
+} */
 </style>

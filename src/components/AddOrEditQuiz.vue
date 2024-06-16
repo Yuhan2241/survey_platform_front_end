@@ -51,7 +51,8 @@ export default{
     created(){
         if (this.$route.params.id) {
             this.quizId = this.$route.params.id
-        this.getQuiz()
+            this.getQuiz()
+            
         }else {
             // 如果沒有id就初始化一個新的問卷物件
             this.quiz = {
@@ -87,6 +88,7 @@ export default{
                 this.questionList = JSON.parse(quizList.questions) //將字串轉回陣列
                 this.is_required = this.questionList[0].is_required
                 console.log(this.questionList)
+                // this.sentToQuizPage()//將題目描述起訖日傳給父層
             })
         },
         // 建立or修改問卷
@@ -98,7 +100,7 @@ export default{
                 "start_date" : this.quizDetail.startDate,
                 "end_date" : this.quizDetail.endDate,
                 "question_list" : this.questionList,
-                "is_published" : ''
+                "is_published" : this.isPublished
             }
             fetch("http://localhost:8080/quiz/create_update",{ //後端設定的地址
                 method:'POST', //方法
@@ -111,7 +113,6 @@ export default{
             .then(data => {
                 console.log(data)
                 })
-            this.sentToQuizPage() //將題目描述起訖日傳給父層
         },
         
         //加入問題
@@ -235,7 +236,7 @@ export default{
                             <td>編輯</td>
                         </tr>
                     
-                        <tr v-for="q in questionList" :key="q.id">
+                        <tr v-for="q in questionList" :key="q.id" class="tr">
                             <!-- <td><input type="checkbox"></td> -->
                             <td>{{q.id}}</td>
                             <td>{{q.title}}</td>
@@ -244,7 +245,7 @@ export default{
                             <td v-else></td>
                             <td>
                                 <!-- 刪除問題 -->
-                                <button type="button" @click="removeQuestion(q.id)"><img src="@/components/svg/delete.svg" alt=""></button>
+                                <button type="button" @click="removeQuestion(q.id)" class="alert"><img src="@/components/svg/delete.svg" alt=""></button>
                                 <!-- 編輯問題 -->
                                 <button type="button" @click="editQuestion(q.id),editItemVisible()"><img src="@/components/svg/edit.svg" alt=""></button>
                             </td>
@@ -275,7 +276,8 @@ export default{
     </div>
 </div>
     <div v-else>
-        <QuizPreview  @backToEdit="showPreview() " @publishQuiz="publishQuiz()" :quizData="quizDetail" :questionList="questionList"/>
+        <QuizPreview  @backToEdit="showPreview() " @publishQuiz="publishQuiz()" 
+        :quizData="quizDetail" :questions="questionList"/>
     </div>
 </template>
 

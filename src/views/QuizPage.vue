@@ -8,21 +8,9 @@ export default{
         return{
             changeForm:"quizContext",
             //問卷內容
-            quizId: "",
-            quiz:{
-                name:"",
-                description:"",
-                quizStartDate : "",
-                quizEndDate : "",
-            }
-            
+            quizId: "",         
             
         }
-    },
-    methods:{
-        setQuizVal(params){
-            this.quiz = {...params}
-        },
     },
     components:{
         AddOrEditQuizVue, ShowFeedback, QuizReview, Statistics
@@ -46,10 +34,10 @@ export default{
         <input type="radio" v-model="changeForm" value="statistics" id="statistics" >
     </div>
     <div v-show="changeForm == 'quizContext'">
-        <AddOrEditQuizVue @quizVal="setQuizVal"/>
+        <AddOrEditQuizVue/>
     </div>
     <div v-show="changeForm == 'feedback'">
-        <ShowFeedback :quizDetail="quiz"/>
+        <ShowFeedback/>
     </div>
     <div v-show="changeForm == 'statistics'" class="container">
         <Statistics/>

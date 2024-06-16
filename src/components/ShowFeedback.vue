@@ -1,19 +1,22 @@
 <script>
-import QuizPreview from './QuizPreview.vue';
+import FeedbackPreview from './FillinPreview.vue';
 
 export default{
     data(){
         return{
             feedbackList: [],
-            quiz:{},
+            // quiz:{},
             currentPage: 1,
             itemsPerPage: 6, //每頁問卷數量
-            currentFillin: null, //當前的填寫內容
+            currentFillin: {}, //當前的填寫內容
+            fillinId:"",
+            previewVisible: false,
         }
     },
     created(){
         this.showFeedback()
-        this.quiz = this.quizDetail
+        
+        // this.quiz = this.quizDetail
     },
     methods:{
         //列出回覆
@@ -32,6 +35,7 @@ export default{
             .then(data => {
             this.feedbackList = data.feedbackList.sort((a,b) => 
             new Date(b.fillinDateTime) - new Date(a.fillinDateTime)) //照填寫時間倒序排列
+            this.currentFillin = this.feedbackList[0].details
             console.log(this.feedbackList)
             if (this.currentPage > this.totalPage) { //更新當前所在頁
                 this.currentPage = this.totalPage > 0 ? this.totalPage : 1;
@@ -48,16 +52,35 @@ export default{
                 this.currentPage--
             }
         },
-        showFillin(feedback) {
-        
-    },
+        //將currentFillin設為點選的內容
+        showFillin(index) {
+            let fillin = this.feedbackList[index].details
+            this.currentFillin = fillin
+            this.fillinId = index
+            console.log(fillin)
+        },
+        //下一個回覆
+        showNextFillin() { 
+            this.fillinId = this.fillinId+1
+            let fillin = this.feedbackList[this.fillinId].details
+            this.currentFillin = fillin;
+            console.log(fillin)
+        },
+        showPrevFillin() { 
+            this.fillinId = this.fillinId-1
+            let fillin = this.feedbackList[this.fillinId].details
+            this.currentFillin = fillin;
+            console.log(fillin)
+        },
+        //讓預覽區域可視化
+        showPreview(){
+            this.previewVisible = !this.previewVisible
+            // window.scrollTo(0, 0)//滾到頂端
+        },
     },
     components:{
-        QuizPreview
+        FeedbackPreview
     },
-    props:[
-        'quizDetail'
-    ],
     computed: {
         //取出每頁所需要的項目
         paginateFeedback(){
@@ -83,12 +106,13 @@ export default{
             }
             return pageList
         },
-    }
+    },
+
 }
 </script>
 
 <template>
-    <div class="container" >
+    <div v-if="!previewVisible" class="container" >
             <table class="table" >
                 <thead>
                     <tr class="tr-first">
@@ -100,14 +124,14 @@ export default{
                 </thead>
                 <span v-if="feedbackList == ''">尚無回覆</span>
                 <tbody v-else>
-                    <tr v-for="(feedback, index) in paginateFeedback" :key="feedback.fillinDateTime">
+                    <tr v-for="(feedback, index) in paginateFeedback" :key="feedback.fillinDateTime" class="tr">
                         <td>{{ feedbackList.length - ((currentPage - 1) * itemsPerPage + index) }}</td>
                         <td>{{ feedback.userName }}</td>
                         <td>{{ feedback.fillinDateTime.replace("T",", ") }}</td>
-                        <td><a href="#" @click="showFillin(feedback)"><img src="./svg/watch.svg" alt=""></a></td>
+                        <td><a href="#" @click="showFillin(index),showPreview()"><img src="./svg/watch.svg" alt=""></a></td>
+                    
                     </tr>
                 </tbody>
-                
             </table>
             <!-- <span>{{ feedbackList }}</span> -->
         <!-- 頁碼 -->
@@ -119,8 +143,15 @@ export default{
             <button v-if="totalPage > 1 && currentPage < totalPage" @click="nextPage()">下一頁</button>
         </div>
         </div>
-        <div>
-            <!-- <QuizPreview :feedbackData="feedbackList"/> -->
+
+        <div v-else>
+            <FeedbackPreview  @next="showNextFillin" @prev="showPrevFillin"
+            :fillinData="currentFillin" :id="fillinId">
+            <button v-show="fillinId>0" @click="showPrevFillin()" class="btn">前一個</button>
+            <span>{{ fillinId+1 }}/{{ feedbackList.length }}</span>
+            <button v-show="fillinId<feedbackList.length-1" @click="showNextFillin()" class="btn">後一個</button>
+            <button type="button" @click="showPreview()" class="btn">返回列表</button>
+            </FeedbackPreview>
         </div>
 </template>
 

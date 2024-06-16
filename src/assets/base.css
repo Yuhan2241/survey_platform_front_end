@@ -1,9 +1,10 @@
 @import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
-  --white: #ffffff;
+  --white-soft: #fdfbf3;
   --yellow: #F2CD60;
   --orange: #FF8552;
+  --orange-soft: #ff86522c;
   --red: #F25757;
   --purple: #B18FCF;
   --blue-light: #61d6e8;
@@ -128,4 +129,9 @@ nav {
 
 .pages{
   color: #181818;
+}
+
+.alert{
+  border: 2px solid var(--red);
+  background-color: rgb(250, 171, 171);
 }

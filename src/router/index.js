@@ -10,32 +10,30 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/backEndPage',
-      name: 'backEndPage',
-      component: () => import('../views/BackEndPage.vue')
-    },
-    {
-      path: '/editQuiz/:id?',
-      name: 'addOrEditQuiz',
-      props:true,
+      path: '/addQuiz',
+      name: 'addQuiz',
+      
       component: () => import('../components/AddOrEditQuiz.vue')
     },
     {
-      path: '/quizPage/:id?',
+      path: '/QuizPage/:id',
       name: 'quizPage',
+      props:true,
       component: () => import('../views/QuizPage.vue')
     },
+    //前台首頁
     {
-      path: '/quizPreview/:id?',
-      name: 'quizPreview',
+      path: '/frontPage',
+      name: 'frontPage',
       props:true,
-      component: () => import('../components/QuizPreview.vue')
+      component: () => import('../views/FrontPage.vue')
     },
+    //後台首頁
     {
-      path: '/showFeedback/:id',
-      name: 'showFeedback',
+      path: '/manageQuizPage',
+      name: 'manageQuizPage',
       props:true,
-      component: () => import('../components/ShowFeedback.vue')
+      component: () => import('../views/ManageQuizPage.vue')
     },
         
   ]

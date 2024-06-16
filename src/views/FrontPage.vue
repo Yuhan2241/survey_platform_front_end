@@ -1,4 +1,5 @@
 <script>
+import Swal from 'sweetalert2'
 export default{
     data(){
         return{
@@ -9,24 +10,22 @@ export default{
             quizList: [],
             currentPage: 1,
             itemsPerPage: 5, //每頁問卷數量
-            statuses: ["開放中", "尚未開始", "已結束", "未發布"],
-            selectedStatuses: ["開放中", "尚未開始", "已結束", "未發布"],
+            selectedIdList:[],
+            allSelected:false,
+            statuses: ["開放中", "尚未開始", "已結束"],
+            selectedStatuses: ["開放中", "尚未開始", "已結束"],
         }
-
     },
     mounted(){
         //讓網頁載入同時抓取問卷列表
         this.getQuiz()
-
     },
-    // props:{
-    //     quizList: Array
-    // },
     computed: {
         //根據狀態篩選問卷
         filteQuiz(){
             return this.quizList.filter(quiz => {
                 let quizStatus = this.quizStatus(quiz).status
+                this.selectedIdList = []
                 return this.selectedStatuses.includes(quizStatus)
             })
         },
@@ -54,7 +53,9 @@ export default{
             }
             return pageList
         },
-        
+        // selectedId(id){
+        //     this.selectedIdList.push(id)
+        // }
     },
     methods:{
         //搜尋問卷
@@ -77,6 +78,24 @@ export default{
                 console.log(this.quizList)
                 this.quizList.startDate = new Date(this.quizList.startDate)
                 this.quizList.endDate = new Date(this.quizList.endDate)
+            })
+        },
+        //刪除問卷
+        deleteQuiz(){
+            let testObj = {
+                id_list: this.selectedIdList
+            }
+            fetch("http://localhost:8080/quiz/delete",{
+                method:'POST',
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(testObj)
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                this.selectedIdList=[]
             })
         },
         nextPage(){
@@ -132,6 +151,42 @@ export default{
                 statusClass = "ended"
                 return {status, class: statusClass}
             }
+        },
+        checkAllSelected() { 
+            if (this.selectedIdList.length === this.filteQuiz.length) {
+                this.allSelected = true;
+            } else {
+                this.allSelected = false;
+            }
+        },
+        //刪除確認視窗
+        deleteAlert(){
+            Swal.fire({
+                title: "你即將刪除所選問卷",
+                text: "此動作無法被復原!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "var(--red)",
+                cancelButtonColor: "#bdbcbc",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                title: "刪除完成!",
+                text: "已刪除所選問卷",
+                icon: "success"
+                });
+            }
+        });
+        }
+    },
+    watch:{
+        allSelected(newVal) {
+            if (newVal) {
+                this.selectedIdList = this.filteQuiz.map(item => item.id);
+            } else {
+                this.selectedIdList = [];
+            }
         }
     }
 }
@@ -141,7 +196,6 @@ export default{
     
     <div class="search container">
         <div>
-            
             <label for="searchName">搜尋問卷</label>
             <input type="search" class="input" v-model="name" placeholder="請輸入問卷名稱" id="searchName">
         </div>
@@ -152,7 +206,7 @@ export default{
             <label for="end"> ~ 結束時間</label>
             <input type="date" class="input" v-model="endDate" name="" id="end">
             
-            <button type="submit" @click="getQuiz()" class="btn"><img src="./svg/search.svg" alt=""></button>
+            <button type="submit" @click="getQuiz()" class="btn"><img src="../components/svg/search.svg" alt=""></button>
         </div>
     
         <div>
@@ -163,12 +217,12 @@ export default{
         </div>
     </div>
     <div class="container">
-        <a href=""><img src="./svg/delete.svg" alt=""></a>
-        <RouterLink to="/addQuiz"><img src="./svg/create.svg" alt=""></RouterLink>
+        <a @click="deleteAlert()"><img src="../components/svg/delete.svg" alt=""></a>
+        <RouterLink to="/addQuiz"><img src="../components/svg/create.svg" alt=""></RouterLink>
         <table class="table">
             <thead>
                 <tr>
-                    <th><input type="checkbox"></th>
+                    <th><input type="checkbox" v-model="allSelected"></th>
                     <th>NO.</th>
                     <th>標題</th>
                     <th>狀態</th>
@@ -179,7 +233,7 @@ export default{
             </thead>
             <tbody>
                 <tr class="tr" v-for="quiz in filteAndPaginateQuiz" :key="quiz.id">
-                    <td><input type="checkbox"></td>
+                    <td><input type="checkbox" :value="quiz.id" v-model="selectedIdList" @change="checkAllSelected"></td>
                     <td>{{ quiz.id }}</td>
                     <td><router-link :to="`/QuizPage/${quiz.id}`" class="link-text">{{ quiz.name }}</router-link></td>
                     <td>
@@ -190,7 +244,7 @@ export default{
                     <!-- <td v-if="quiz.startDate < currentTime"><span>尚未開始</span> 還剩餘2天</td> -->
                     <td>{{quiz.startDate}}</td>
                     <td>{{quiz.endDate}}</td>
-                    <td><a href=""><img src="./svg/watch.svg" alt=""></a></td>
+                    <td><a href=""><img src="../components/svg/watch.svg" alt=""></a></td>
                 </tr>
             </tbody>
         </table>
@@ -213,12 +267,14 @@ export default{
     td{
         border-top: 1px solid black;
     }
-
+    .tr:hover{
+        background: var(--orange-soft);
+    }
     .currentPage{
         display: inline-block;
         width: 20px;
         height: 20px;
-        background-color: var(--blue);
+        background-color: var(--orange-soft);
         color: white;
         border-radius: 50%;
     }
