@@ -9,52 +9,28 @@ export default{
             changeForm:"quizContext",
             //問卷內容
             quizId: "",
-            name: "",
-            description: "",
-            startDate : "",
-            endDate : "",
-            questionList : [],
-            isPublished : false,
-            qid:1,
-
-            question:{
-                id : 1,
-                title : "",
-                options : "",
-                type : "",
-                isRequired : false
-            },
-            types: ["單選題", "多選題", "簡述題"],
-            //正在編輯的題目
-            editItem:[],
-            //現在時間
-            currentTime: new Date()
+            quiz:{
+                name:"",
+                description:"",
+                quizStartDate : "",
+                quizEndDate : "",
+            }
+            
+            
         }
     },
-    // created(){
-    //     if (this.$route.params.id) {
-    //         // this.quizId = this.$route.params.id
-    //     this.getQuiz
-    //     this.showFeedback
-    //     }else {
-    //         // 如果沒有id就初始化一個新的問卷物件
-    //         this.quiz = {
-    //             id: 1,
-    //             title: "",
-    //             options: "",
-    //             type: "",
-    //             is_required: false
-    //         }
-    //     }
-    // },
     methods:{
+        setQuizVal(params){
+            this.quiz = {...params}
+        },
     },
     components:{
         AddOrEditQuizVue, ShowFeedback, QuizReview, Statistics
     },
     props:[
         'id'
-    ]
+    ],
+    
     
 }
 </script>
@@ -64,16 +40,16 @@ export default{
         <!-- 前往問卷編輯頁 -->
         <label class="label" for="change" :class="{checked : changeForm === 'quizContext'}">問卷編輯</label>
         <input type="radio" v-model="changeForm" value="quizContext" id="change" >
-        <label class="label" for="response" :class="{checked : changeForm === 'response'}">問卷答覆</label>
-        <input type="radio" v-model="changeForm" value="response" id="response" >
+        <label class="label" for="feedback" :class="{checked : changeForm === 'feedback'}">問卷回覆</label>
+        <input type="radio" v-model="changeForm" value="feedback" id="feedback" >
         <label class="label" for="statistics" :class="{checked : changeForm === 'statistics'}">統計</label>
         <input type="radio" v-model="changeForm" value="statistics" id="statistics" >
     </div>
     <div v-show="changeForm == 'quizContext'">
-        <AddOrEditQuizVue/>
+        <AddOrEditQuizVue @quizVal="setQuizVal"/>
     </div>
-    <div v-show="changeForm == 'response'">
-        <ShowFeedback/>
+    <div v-show="changeForm == 'feedback'">
+        <ShowFeedback :quizDetail="quiz"/>
     </div>
     <div v-show="changeForm == 'statistics'" class="container">
         <Statistics/>

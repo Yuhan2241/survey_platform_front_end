@@ -19,9 +19,9 @@ export default{
         this.getQuiz()
 
     },
-    props:{
-        quizList: Array
-    },
+    // props:{
+    //     quizList: Array
+    // },
     computed: {
         //根據狀態篩選問卷
         filteQuiz(){
@@ -197,11 +197,10 @@ export default{
         <div class="pages">
             <button v-if="currentPage > 1" @click="prevPage()">上一頁</button>
             <!-- 頁碼 -->
-            
             <a href="#" class="pages" v-for="page in pagesNum" :key="page"
                 @click="() => currentPage = page" :class="{'currentPage' : page === currentPage}">
                 {{ page }}</a>
-            <button v-if="totalPage > 1" @click="nextPage()">下一頁</button>
+            <button v-if="totalPage > 1 && currentPage < totalPage" @click="nextPage()">下一頁</button>
         </div>
     </div>
     

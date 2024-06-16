@@ -2,21 +2,29 @@
 export default{
     data() {
         return {
-        quiz: null
+            quiz: this.quizData,
+            questionList: this.questionList
         };
     },
     props:[
-        'quizData'
+        'quizData','questionList','feedbackData'
     ],
+    watch:{
+        quizData(newVal) {
+            this.quiz = newVal;
+        },
+        questionList(newVal) {
+            this.questionList = newVal;
+        }
+    }
 }
 
 </script>
-
 <template>
     <div class="container">
-        <span>{{ quizData.startDate +"~"+ quizData.endDate }}</span>
-        <p>問卷標題: {{ quizData.name }}</p>
-        <p>問卷描述: {{ quizData.description }}</p>
+        <span>{{ quiz.startDate +"~"+ quiz.endDate }}</span>
+        <h1>{{ quiz.name }}</h1>
+        <p>問卷描述: {{ quiz.description }}</p>
         <div>
             <ul>
                 <label for="userName"><li>姓名</li></label>
@@ -29,7 +37,7 @@ export default{
                 <input type="number" class="input" id="age">
             </ul>
         </div>
-        <div v-for="(question, index) in quizData.questionList" :key="index">
+        <div v-for="(question, index) in questionList" :key="index">
             <h3>{{ question.id + ". " + question.title }}</h3><span v-if="question.is_required == true">必填</span>
             <div v-if="question.type === '單選題'">
                 <div v-for="(option, i) in question.options.split(';')" :key="i">

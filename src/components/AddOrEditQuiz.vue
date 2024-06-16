@@ -6,14 +6,22 @@ import QuizPreview from './QuizPreview.vue';
 export default{
     data(){
         return{
+            previewVisible: false,
+            //正在編輯的題目
+            editItem:[],
+            showEditItem: false,
+            //預覽
+            preview:false,
             // quizStore : useQuizStore(),
-            changeForm:"quizContext",
             //問卷內容
             quizId: "",
-            name: "",
-            description: "",
-            startDate : "",
-            endDate : "",
+            quizDetail:{
+                name: "",
+                description: "",
+                startDate : "",
+                endDate : "",
+            },
+            
             questionList : [],
             isPublished : false,
             qid:1,
@@ -24,7 +32,7 @@ export default{
                 title : "",
                 options : "",
                 type : "",
-                isRequired : false
+                is_required : false
             },
             types: ["單選題", "多選題", "簡述題"],
             //正在編輯的題目
@@ -56,7 +64,7 @@ export default{
         }
     },
     methods:{
-        //取得問卷
+        // 取得問卷
         getQuiz(){
             let Obj={
                 quizId : this.quizId
@@ -72,23 +80,23 @@ export default{
             .then(data => {
                 this.statusCode = data.statusCode
                 let quizList = data.quizList[0]
-                this.name = quizList.name
-                this.description = quizList.description
-                this.startDate = quizList.startDate 
-                this.endDate = quizList.endDate 
+                this.quizDetail.name = quizList.name
+                this.quizDetail.description = quizList.description
+                this.quizDetail.startDate = quizList.startDate 
+                this.quizDetail.endDate = quizList.endDate 
                 this.questionList = JSON.parse(quizList.questions) //將字串轉回陣列
-                this.isRequired = this.questionList[0].is_required
+                this.is_required = this.questionList[0].is_required
                 console.log(this.questionList)
             })
         },
-        //建立問卷
-        create(){
+        // 建立or修改問卷
+        createOrUpdate(){
             let createObj = {
                 "id" : this.quizId,
-                "name": this.name,
-                "description": this.description,
-                "start_date" : this.startDate,
-                "end_date" : this.endDate,
+                "name": this.quizDetail.name,
+                "description": this.quizDetail.description,
+                "start_date" : this.quizDetail.startDate,
+                "end_date" : this.quizDetail.endDate,
                 "question_list" : this.questionList,
                 "is_published" : ''
             }
@@ -102,7 +110,8 @@ export default{
             .then(res => res.json())
             .then(data => {
                 console.log(data)
-            })
+                })
+            this.sentToQuizPage() //將題目描述起訖日傳給父層
         },
         
         //加入問題
@@ -114,7 +123,7 @@ export default{
                 title : "",
                 options : "",
                 type : "",
-                isRequired : false
+                is_required : false
             }
         },
         //移除問題
@@ -146,9 +155,10 @@ export default{
         //讓預覽區域可視化
         showPreview(){
             this.previewVisible = !this.previewVisible
+            window.scrollTo(0, 0)//滾到頂端
         },
         //修改問卷彈出訊息
-        saveQuiz(){
+        saveQuizMsg(){
             if(this.statusCode == 200){
                 Swal.fire("修改成功!")
                 }else{
@@ -159,13 +169,16 @@ export default{
         //發布問卷
         publishQuiz(){
             this.isPublished = true
-            this.create()
+            this.createOrUpdate()
             if(this.statusCode == 200){ //根據回傳狀態碼彈出訊息
                 Swal.fire("發布成功!")
                 }else{
                 Swal.fire("發布失敗，請再試一次!")
             }
             this.statusCode = ""
+        },
+        sentToQuizPage(){
+            this.$emit('quizVal', this.quizDetail)
         }
     },
     
@@ -181,24 +194,24 @@ export default{
         <router-link :to="`/statistics/${quizId}`"><label for="statistics">統計</label></router-link>
         <input type="radio" v-model="changeForm" value="statistics" id="statistics" >
     </div> -->
-    <div v-if="previewVisible">
-    <div  class="container">
-        <div class="quizSubject context" v-show="changeForm == 'quizContext'">
-            <ul>
-                <label for="quizTitle"><li>問卷名稱</li></label>
-                <input class="input" type="text" v-model="name" placeholder="請輸入問卷標題" id="quizTitle" required>
-                <label for="quizDetail"><li>問卷說明</li></label>
-                <textarea class="" v-model="description" placeholder="請輸入問卷說明" id="quizDetail" required></textarea>
-                <li>開始時間(須為今日之後)</li>
-                <input class="input" v-model="startDate" type="date" required>
-                <li>結束時間</li>
-                <input class="input" v-model="endDate" type="date" required>
-            </ul>
+
+    <div v-if="!previewVisible">
+        <div  class="container">
+            <div class="quizSubject context">
+                <ul>
+                    <label for="quizTitle"><li>問卷名稱</li></label>
+                    <input class="input" type="text" v-model="quizDetail.name" placeholder="請輸入問卷標題" id="quizTitle" required>
+                    <label for="quizDetail"><li>問卷說明</li></label>
+                    <textarea class="" v-model="quizDetail.description" placeholder="請輸入問卷說明" id="quizDetail" required></textarea>
+                    <li>開始時間(須為今日之後)</li>
+                    <input class="input" v-model="quizDetail.startDate" type="date" required>
+                    <li>結束時間</li>
+                    <input class="input" v-model="quizDetail.endDate" type="date" required>
+                </ul>
+            </div>
         </div>
-        <div class="statistics" v-show="changeForm == 'statistics'">
-        </div>
-    </div>
-    <div class="container" v-show="changeForm == 'quizContext'">
+    
+    <div class="container">
         <div class="questions context" >
             <ul>
                 <label for="quesTitle" required><li>編輯題目</li></label>
@@ -206,7 +219,7 @@ export default{
                 <select v-model="question.type" name="quesType" id="quesType">
                     <option v-for="option in types" :value="option" :key="option">{{ option }}</option>
                 </select>
-                <input type="checkbox" v-model="question.isRequired" id="isRequired">
+                <input type="checkbox" v-model="question.is_required" id="isRequired">
                 <label for="isRequired" >必填</label>
                 <label for="options"><li>選項 (多個選項間請以分號;分隔，例:晴天;雨天)</li></label>
                 <textarea class="" v-model="question.options" placeholder="" id="options"></textarea>
@@ -218,7 +231,7 @@ export default{
                             <td>NO.</td>
                             <td>題目</td>
                             <td>問題種類</td>
-                            <td >必填</td>
+                            <td>必填</td>
                             <td>編輯</td>
                         </tr>
                     
@@ -246,8 +259,8 @@ export default{
                         <option value="多選題">多選題</option>
                         <option value="簡述題">簡述題</option>
                     </select>
-                    <input type="checkbox" v-model="editItem.is_required">
-                    <label for="isRequired">必填</label>
+                    <input type="checkbox" v-model="editItem.is_required" id="isRequired2">
+                    <label for="isRequired2">必填</label>
                     <label for="options"><li>選項</li></label>
                     <textarea class="" v-model="editItem.options"></textarea>
                     <button class="btn" @click="editItemVisible()">取消</button>
@@ -257,12 +270,12 @@ export default{
             
         </div>
             <router-link to="/backEndPage"><button class="btn">取消</button></router-link>
-            <button class="btn" @click="create(),saveQuiz()">儲存修改</button>
+            <button class="btn" @click="createOrUpdate(),saveQuizMsg()">儲存修改</button>
             <button class="btn btn-submit" @click="showPreview()">問卷預覽</button>
     </div>
 </div>
     <div v-else>
-        <QuizPreview  @backToEdit="showPreview() " @publishQuiz="publishQuiz()" :quizData="$data"/>
+        <QuizPreview  @backToEdit="showPreview() " @publishQuiz="publishQuiz()" :quizData="quizDetail" :questionList="questionList"/>
     </div>
 </template>
 
