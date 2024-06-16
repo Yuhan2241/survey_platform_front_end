@@ -16,7 +16,7 @@ const router = createRouter({
       component: () => import('../components/AddOrEditQuiz.vue')
     },
     {
-      path: '/QuizPage/:id',
+      path: '/quizPage/:id?',
       name: 'quizPage',
       props:true,
       component: () => import('../views/QuizPage.vue')
@@ -35,6 +35,12 @@ const router = createRouter({
       props:true,
       component: () => import('../views/ManageQuizPage.vue')
     },
+    {
+      path: '/fillinPage/:id?',
+      name: 'fillinPage',
+      props:true,
+      component: () => import('../components/FillinPage.vue')
+    }
         
   ]
 })

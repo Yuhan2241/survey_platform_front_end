@@ -35,7 +35,9 @@ export default{
             .then(data => {
             this.feedbackList = data.feedbackList.sort((a,b) => 
             new Date(b.fillinDateTime) - new Date(a.fillinDateTime)) //照填寫時間倒序排列
-            this.currentFillin = this.feedbackList[0].details
+            if(data.feedbackList !== ''){
+                this.currentFillin = this.feedbackList.details
+            }
             console.log(this.feedbackList)
             if (this.currentPage > this.totalPage) { //更新當前所在頁
                 this.currentPage = this.totalPage > 0 ? this.totalPage : 1;

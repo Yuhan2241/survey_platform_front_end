@@ -34,8 +34,6 @@ export default{
 
 </script>
 <template>
-    {{ quiz }}
-
     <div class="container preview">
         <span>{{ quiz.startDate +"~"+ quiz.endDate }}</span>
         <h1>{{ quiz.name }}</h1>
@@ -68,8 +66,7 @@ export default{
                 <textarea :name="'question_' + index"></textarea>
             </div>
         </div>
-        <button type="button" @click="$emit('backToEdit')" class="btn">返回修改</button>
-        <button type="button" @click="$emit('publishQuiz')" class="btn">發布</button>
+        <slot></slot>
     </div>
 
 </template>

@@ -1,13 +1,16 @@
 <script>
 import Swal from 'sweetalert2'
+// import FillinPage from '@/components/FillinPage.vue';
 export default{
     data(){
         return{
+            quizId:"",
             name: "",
             startDate :"",
             endDate : "",
             published:false,
             quizList: [],
+            currentQuiz:{},
             currentPage: 1,
             itemsPerPage: 5, //每頁問卷數量
             selectedIdList:[],
@@ -152,33 +155,10 @@ export default{
                 return {status, class: statusClass}
             }
         },
-        checkAllSelected() { 
-            if (this.selectedIdList.length === this.filteQuiz.length) {
-                this.allSelected = true;
-            } else {
-                this.allSelected = false;
-            }
+        showQuiz(quiz) {
+            this.currentQuiz = quiz
+            console.log(this.currentQuiz)
         },
-        //刪除確認視窗
-        deleteAlert(){
-            Swal.fire({
-                title: "你即將刪除所選問卷",
-                text: "此動作無法被復原!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "var(--red)",
-                cancelButtonColor: "#bdbcbc",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                title: "刪除完成!",
-                text: "已刪除所選問卷",
-                icon: "success"
-                });
-            }
-        });
-        }
     },
     watch:{
         allSelected(newVal) {
@@ -188,12 +168,14 @@ export default{
                 this.selectedIdList = [];
             }
         }
-    }
+    },
+    // components:{
+    //     FillinPage
+    // }
 }
 </script>
 
 <template>
-    
     <div class="search container">
         <div>
             <label for="searchName">搜尋問卷</label>
@@ -217,8 +199,8 @@ export default{
         </div>
     </div>
     <div class="container">
-        <a @click="deleteAlert()"><img src="../components/svg/delete.svg" alt=""></a>
-        <RouterLink to="/addQuiz"><img src="../components/svg/create.svg" alt=""></RouterLink>
+        <!-- <a @click="deleteAlert()"><img src="../components/svg/delete.svg" alt=""></a> -->
+        <!-- <RouterLink to="/addQuiz"><img src="../components/svg/create.svg" alt=""></RouterLink> -->
         <table class="table">
             <thead>
                 <tr>
@@ -233,15 +215,14 @@ export default{
             </thead>
             <tbody>
                 <tr class="tr" v-for="quiz in filteAndPaginateQuiz" :key="quiz.id">
-                    <td><input type="checkbox" :value="quiz.id" v-model="selectedIdList" @change="checkAllSelected"></td>
+                    <!-- <td><input type="checkbox" :value="quiz.id" v-model="selectedIdList" @change="checkAllSelected"></td> -->
                     <td>{{ quiz.id }}</td>
-                    <td><router-link :to="`/QuizPage/${quiz.id}`" class="link-text">{{ quiz.name }}</router-link></td>
+                    <td><RouterLink :to="`/fiilinPage/${quiz.id}`" class="link-text">{{ quiz.name }}</RouterLink></td>
                     <td>
                         <span :class="quizStatus(quiz).class" class="status">{{ quizStatus(quiz).status}}</span> 
                         <span v-if="quizStatus(quiz).days">{{ quizStatus(quiz).days}}</span>
                         <span v-else-if="quizStatus(quiz).hours">{{ quizStatus(quiz).hours }}</span>
                     </td>
-                    <!-- <td v-if="quiz.startDate < currentTime"><span>尚未開始</span> 還剩餘2天</td> -->
                     <td>{{quiz.startDate}}</td>
                     <td>{{quiz.endDate}}</td>
                     <td><a href=""><img src="../components/svg/watch.svg" alt=""></a></td>
@@ -257,10 +238,13 @@ export default{
             <button v-if="totalPage > 1 && currentPage < totalPage" @click="nextPage()">下一頁</button>
         </div>
     </div>
-    
+    <!-- <FillinPage class="test" :quizData="currentQuiz"/> -->
 </template>
 
 <style scoped lang="scss">
+.test{
+    display: none;
+}
     table{  
         border-collapse: collapse;
     }

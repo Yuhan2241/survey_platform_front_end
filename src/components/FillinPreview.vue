@@ -10,7 +10,6 @@ export default{
     ],
     mounted(){
         this.fillin = this.fillinData
-        this.fillinId = this.id
     },
     watch:{
         fillinData(newFillinData){
@@ -57,9 +56,6 @@ export default{
             </div>
         </div>
         <slot></slot>
-        <!-- <button type="button" @click="$emit('prev'),index" class="btn">上個回覆</button> -->
-        <!-- <button type="button" @click="$emit('backToList')" class="btn">返回列表</button> -->
-        <!-- <button type="button" @click="$emit('next'),index" class="btn">下個回覆</button> -->
     </div>
 
 </template>

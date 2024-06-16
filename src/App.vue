@@ -7,6 +7,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/frontPage" :key="$route.fullPath">前台首頁</RouterLink>
+      <!-- <RouterLink to="/fillinPage">填寫問卷</RouterLink> -->
       <RouterLink to="/manageQuizPage" :key="$route.fullPath">後台首頁</RouterLink>
       <RouterLink to="/addQuiz">新增問卷</RouterLink>
     </nav>

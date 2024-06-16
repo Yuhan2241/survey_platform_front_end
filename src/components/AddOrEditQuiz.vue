@@ -187,15 +187,6 @@ export default{
 </script>
 
 <template>
-    <!-- <div class="options">
-        <router-link :to="`/editQuiz/${quizId}`"><label class="label" for="change">問卷編輯</label></router-link>
-        <input type="radio" v-model="changeForm" value="quizContext" id="change" >
-        <router-link :to="`/ShowFeedback/${quizId}`"><label class="label" for="response">問卷答覆</label></router-link>
-        <input type="radio" v-model="changeForm" value="response" id="response" >
-        <router-link :to="`/statistics/${quizId}`"><label for="statistics">統計</label></router-link>
-        <input type="radio" v-model="changeForm" value="statistics" id="statistics" >
-    </div> -->
-
     <div v-if="!previewVisible">
         <div  class="container">
             <div class="quizSubject context">
@@ -276,8 +267,10 @@ export default{
     </div>
 </div>
     <div v-else>
-        <QuizPreview  @backToEdit="showPreview() " @publishQuiz="publishQuiz()" 
-        :quizData="quizDetail" :questions="questionList"/>
+        <QuizPreview :quizData="quizDetail" :questions="questionList">
+        <button type="button" @click="showPreview()" class="btn">返回修改</button>
+        <button type="button" @click="publishQuiz()" class="btn">發布</button>
+        </QuizPreview>
     </div>
 </template>
 
