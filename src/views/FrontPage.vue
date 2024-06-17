@@ -1,6 +1,5 @@
 <script>
 import Swal from 'sweetalert2'
-// import FillinPage from '@/components/FillinPage.vue';
 export default{
     data(){
         return{
@@ -204,7 +203,7 @@ export default{
         <table class="table">
             <thead>
                 <tr>
-                    <th><input type="checkbox" v-model="allSelected"></th>
+                    <!-- <th><input type="checkbox" v-model="allSelected"></th> -->
                     <th>NO.</th>
                     <th>標題</th>
                     <th>狀態</th>
@@ -217,7 +216,8 @@ export default{
                 <tr class="tr" v-for="quiz in filteAndPaginateQuiz" :key="quiz.id">
                     <!-- <td><input type="checkbox" :value="quiz.id" v-model="selectedIdList" @change="checkAllSelected"></td> -->
                     <td>{{ quiz.id }}</td>
-                    <td><RouterLink :to="`/fiilinPage/${quiz.id}`" class="link-text">{{ quiz.name }}</RouterLink></td>
+                    <td v-if="quizStatus(quiz).status == '開放中'"><router-link v-if="quizStatus(quiz).status == '開放中'" :to="`/fillinPage/${quiz.id}`" class="link-text">{{ quiz.name }}</router-link></td>
+                    <td v-else>{{ quiz.name }}</td>
                     <td>
                         <span :class="quizStatus(quiz).class" class="status">{{ quizStatus(quiz).status}}</span> 
                         <span v-if="quizStatus(quiz).days">{{ quizStatus(quiz).days}}</span>

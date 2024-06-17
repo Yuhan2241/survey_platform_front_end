@@ -1,25 +1,24 @@
 <script>
+import Swal from 'sweetalert2'
 export default{
     data() {
         return {
             quiz: [],
             quizId:"",
-            questions:[]
+            questionList:[],
+
+            name: "",
+            phone: "",
+            email : "",
+            age : "",
+            fillin_list:[],
         };
     },
-    // props:[
-    //     'quizData', //填答內容(1筆)from ShowFeedback
-    // ],
     mounted(){
-        // this.quiz = this.quizData
         this.quizId = this.$route.params.id
         this.getQuiz()
     },
-    watch:{
-        quizData(newQuizData){
-            this.quiz = newQuizData
-        },
-    },
+
     methods:{
         // 取得問卷
         getQuiz(){
@@ -37,14 +36,46 @@ export default{
             .then(data => {
                 this.statusCode = data.statusCode
                 this.quiz = data.quizList[0]
-                this.questions = data.quizList[0].questions
-                // this.quizDetail.name = quizList.name
-                // this.quizDetail.description = quizList.description
-                // this.quizDetail.startDate = quizList.startDate 
-                // this.quizDetail.endDate = quizList.endDate 
-                // this.questionList = JSON.parse(quizList.questions) //將字串轉回陣列
-                // this.is_required = this.questionList[0].is_required
-                console.log(this.quiz)
+                // this.questions = data.quizList[0].questions
+                this.questionList = data.quizList[0].questions
+                this.questionList = JSON.parse(this.questionList)//將字串轉回陣列
+                this.is_required = this.questionList[0].is_required
+                console.log(this.questionList)
+            })
+        },
+        fillin(){
+            let Obj={
+                "quiz_id": 16,
+                "name": "ABC",
+                "phone": "0906123456",
+                "email" : "abc@gmail.com",
+                "age" : 45,
+                "fillin_list" : [ 
+            {
+                "question_id": 1,
+                "question": "便當類吃什麼",
+                "options":"雞腿;排骨;炸雞排;鱈魚",
+                "answer": "排骨",
+                "type": "radio",
+                "required": true
+            }]
+            }
+            fetch("http://localhost:8080/quiz/search",{
+                method:'POST',
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(Obj)
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.statusCode = data.statusCode
+                this.quiz = data.quizList[0]
+                // this.questions = data.quizList[0].questions
+                this.questionList = data.quizList[0].questions
+                this.questionList = JSON.parse(this.questionList)//將字串轉回陣列
+                this.is_required = this.questionList[0].is_required
+                console.log(this.questionList)
             })
         },
     }
@@ -67,25 +98,24 @@ export default{
                 <label for="age"><li>年齡</li></label>
                 <input type="number" v-model="quiz.age" class="input" id="age" readonly>
             </ul>
-            {{ questions }}
         </div>
-        <div v-for="question in questions" :key="question.id">
-            <h3>{{ question.id + ". " + question.question }}</h3><span v-if="question.required == true">必填</span>
+        <div v-for="question in questionList" :key="question.id">
+            <h3>{{ question.id + ". " + question.title }}</h3><span v-if="question.is_required">必填</span>
             <div v-if="question.type === '單選題'">
                 <div v-for="(option, i) in question.options.split(';')" :key="i">
-                <input type="radio" :checked="question.answer === question.option" :name="'question_' + index" :value="option">{{ option }}
+                <input type="radio" :name="'question_' + index" :value="option">{{ option }}
                 </div>
             </div>
             <div v-else-if="question.type === '多選題'">
                 <div v-for="(option, i) in question.options.split(';')" :key="i">
-                <input type="checkbox" :checked="question.answer.includes(option)" :name="'question_' + index" :value="option">{{ option }}
+                <input type="checkbox" :name="'question_' + index" :value="option">{{ option }}
                 </div>
             </div>
             <div v-else-if="question.type === '簡述題'">
                 <textarea v-model="question.answer" :name="'question_' + index" disabled></textarea>
             </div>
         </div>
-        <slot></slot>
+
     </div>
 
 </template>

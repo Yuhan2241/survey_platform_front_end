@@ -1,12 +1,14 @@
 <script>
 import * as echarts from 'echarts'
-
+import StatisticsChart from './StatisticsChart.vue';
 export default {
     data(){
         return{
-            chart:null,
-            charts:{},
-            chartData:{"question_1": { "option_1": 10, "option_2": 20 }},
+            // chart:null,
+            // charts:{},
+            quizId:'',
+            quizName:'',
+            chartData:{}
             // barOptions:{
             //     tooltip: {
             //         trigger: 'item'
@@ -47,94 +49,59 @@ export default {
                     // ]
                     // }
                 // ]
-            
+                // }
         }
     },
-    mounted(){
-        // this.getStatistics()
-        this.$nextTick(() => {
-            this.chartData = { ...this.chartData };
-        });
-        // this.counts.forEach((count, index) => { //foreach陣列
-            // count = Object.entries(count[index]).map(([name, value]) => ({ name, value }))
-            // count.forEach(option => {
-                // // option = this.barOptions.series[0].data
-                // const chart = echarts.init(this.$refs.charts) //初始化一個圖表 
-                // chart.setOption(this.barOptions) //設定圖表選項
-                // this.charts.push(chart) //建立一個新的圖表
-            // })        
-        // });
+    components:{
+        StatisticsChart
+    },
+    mounted() {
+        this.getStatistics()
     },
     methods:{
         getStatistics(){
-                let statisticsObj = {
-                    "quiz_id" : this.$route.params.id,
-                }
-                fetch("http://localhost:8080/quiz/statistics",{ 
-                    method:'POST', 
-                    headers:{
-                        "Content-Type":"application/json" 
-                    },
-                    body:JSON.stringify(statisticsObj) 
-                })
-                .then(res => res.json())
-                .then(data => {
-                    this.chartData = data.countMap
-                    this.$nextTick(() => {
-            this.chartData = { ...this.chartData };
-        });
-                    // for(let option in data.countMap){
-                    //     for(let name in data.countMap[option]){
-                    //         let value = data.countMap[option][name]
-                    //         this.counts.push({option, value})
-                    //     }
-                    // }
-                    //將物件轉為鍵值對的格式 {name:, value}
-                    // this.counts = Object.entries(data.countMap).map(([name, value]) => ({ name, value }));
-                    
-                    console.log(data.countMap)
-                })
-            },
-        
-        getChartOptions(data, questionId) {
-            return {
-                title: {
-                text: questionId
+            let obj = {
+                quiz_id : 20
+            }
+            fetch("http://localhost:8080/quiz/statistics",{ 
+                method:'POST', 
+                headers:{
+                    "Content-Type":"application/json" 
                 },
-                tooltip: {},
-                xAxis: {
-                type: 'category',
-                data: Object.keys(data)
-                },
-                yAxis: {
-                type: 'value'
-                },
-                series: [{
-                type: 'bar',
-                data: Object.values(data)
-                }]
-            };
-        }
+                body:JSON.stringify(obj) 
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.chartData = data.countMap
+                this.quizName = data.quizName
+                // for(let option in data.countMap){
+                //     for(let name in data.countMap[option]){
+                //         let value = data.countMap[option][name]
+                //         this.counts.push({option, value})
+                //     }
+                // }
+                //將物件轉為鍵值對的格式 {name:, value}
+                // this.counts = Object.entries(data.countMap).map(([name, value]) => ({ name, value }));
+                
+                console.log(data.countMap)
+            })
+        },
+    
     },
+
 }
 </script>
 
 <template>
-    <!-- <div class="container">
-        <div ref="charts" class="charts"></div>
-    </div> -->
-    <div v-for="(data, questionId) in chartData" :key="questionId" class="charts">
-    <V-chart :options="getChartOptions(data, questionId)" style="height: 400px; width: 100%;"></V-chart>
-    </div>
+    {{chartData}}
+    <span>即時統計結果</span>
+<h1>{{ quizName }}</h1>
+    <StatisticsChart v-for="(data, id) in chartData" :key="id+1" :chartData="data">
+    </StatisticsChart>
         
     
 </template>
 
 <style scoped>
-.charts{
-    width: 500px;
-    height: 400px;
-}
-
 
 </style>
