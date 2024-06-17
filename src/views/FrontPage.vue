@@ -225,7 +225,7 @@ export default{
                     </td>
                     <td>{{quiz.startDate}}</td>
                     <td>{{quiz.endDate}}</td>
-                    <td><a href=""><img src="../components/svg/watch.svg" alt=""></a></td>
+                    <td><a href=""><img v-if="quizStatus(quiz).status !== '尚未開始'" src="../components/svg/watch.svg" alt=""></a></td>
                 </tr>
             </tbody>
         </table>

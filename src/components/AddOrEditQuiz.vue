@@ -2,6 +2,7 @@
 import Swal from 'sweetalert2'
 import QuizPreview from './QuizPreview.vue';
 
+
 // import { useQuizStore } from '../stores/QuizStore'
 export default{
     data(){
@@ -40,6 +41,7 @@ export default{
             showEditItem: false,
             //現在時間
             currentTime: new Date(),
+            quizEditable: false,
             preview:false,
             statusCode:'',
             previewVisible: false,
@@ -178,8 +180,13 @@ export default{
             }
             this.statusCode = ""
         },
-        sentToQuizPage(){
-            this.$emit('quizVal', this.quizDetail)
+        // sentToQuizPage(){
+        //     this.$emit('quizVal', this.quizDetail)
+        // }
+        ifEditable(){
+            if(this.isPublished == true || quizDetail.startDate < currentTime){
+                quizEditable = false //設為不可編輯
+            }
         }
     },
     
@@ -189,7 +196,7 @@ export default{
 <template>
     <div v-if="!previewVisible">
         <div  class="container">
-            <div class="quizSubject context">
+            <form class="quizSubject context" disabled>
                 <ul>
                     <label for="quizTitle"><li>問卷名稱</li></label>
                     <input class="input" type="text" v-model="quizDetail.name" placeholder="請輸入問卷標題" id="quizTitle" required>
@@ -200,7 +207,7 @@ export default{
                     <li>結束時間</li>
                     <input class="input" v-model="quizDetail.endDate" type="date" required>
                 </ul>
-            </div>
+            </form>
         </div>
     
     <div class="container">
@@ -261,7 +268,7 @@ export default{
             </ul>
             
         </div>
-            <router-link to="/backEndPage"><button class="btn">取消</button></router-link>
+            <router-link to="/manageQuizPage"><button class="btn">取消</button></router-link>
             <button class="btn" @click="createOrUpdate(),saveQuizMsg()">儲存修改</button>
             <button class="btn btn-submit" @click="showPreview()">問卷預覽</button>
     </div>
@@ -299,5 +306,8 @@ export default{
 }
 textarea{
     resize: none;
+}
+.disable{
+
 }
 </style>

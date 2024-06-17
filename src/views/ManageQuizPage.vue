@@ -1,4 +1,5 @@
 <script>
+
 import Swal from 'sweetalert2'
 export default{
     data(){
@@ -173,12 +174,16 @@ export default{
                 confirmButtonText: "Yes, delete it!"
             }).then((result) => {
             if (result.isConfirmed) {
+                this.deleteQuiz()
                 Swal.fire({
                 title: "刪除完成!",
                 text: "已刪除所選問卷",
                 icon: "success"
                 });
-            }
+                }
+                setTimeout(function() {
+                location.reload();
+                }, 5000); //延遲5秒後刷新頁面
         });
         }
     },
@@ -243,7 +248,6 @@ export default{
                         <span v-if="quizStatus(quiz).days">{{ quizStatus(quiz).days}}</span>
                         <span v-else-if="quizStatus(quiz).hours">{{ quizStatus(quiz).hours }}</span>
                     </td>
-                    <!-- <td v-if="quiz.startDate < currentTime"><span>尚未開始</span> 還剩餘2天</td> -->
                     <td>{{quiz.startDate}}</td>
                     <td>{{quiz.endDate}}</td>
                     <td><a href=""><img src="../components/svg/watch.svg" alt=""></a></td>
