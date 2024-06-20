@@ -120,10 +120,10 @@ export default{
                 statusClass = "notPublished"
                 return {status, class: statusClass}
             }
-            if(startDate <= today && endDate > today){
+            if(startDate <= today && endDate >= today){
                 //因為開始結束時間為UTC+0 要減八小時轉換成UTC+8(台灣時間)
                 //兩個日期相減會得到毫秒，所以要除以毫秒轉換成為天數
-                days =  Math.ceil((endDate - today -1000*60*60*24)/ (1000*60*60*24)) 
+                days =  Math.ceil((endDate - today)/ (1000*60*60*24)) 
                 status = "開放中"
                 statusClass = "open"
                 if(days < 1){
@@ -148,7 +148,7 @@ export default{
                 days =  "距開放還有: " + days + "天"
                 return {status, days, class: statusClass}
             }
-            if(endDate < today){
+            else{
                 let status = "已結束"
                 statusClass = "ended"
                 return {status, class: statusClass}
@@ -158,15 +158,6 @@ export default{
             this.currentQuiz = quiz
             console.log(this.currentQuiz)
         },
-    },
-    watch:{
-        allSelected(newVal) {
-            if (newVal) {
-                this.selectedIdList = this.filteQuiz.map(item => item.id);
-            } else {
-                this.selectedIdList = [];
-            }
-        }
     },
     // components:{
     //     FillinPage
@@ -178,32 +169,26 @@ export default{
     <div class="search container">
         <div>
             <label for="searchName">搜尋問卷</label>
-            <input type="search" class="input" v-model="name" placeholder="請輸入問卷名稱" id="searchName">
+            <input type="search" v-model="name" placeholder="請輸入問卷名稱" id="searchName" class="form-control form-control-sm">
         </div>
-        <div >
+        <div>
             <label for="start">開始時間</label>
-            <input type="date" class="input"  v-model="startDate" name="" id="start">
-
             <label for="end"> ~ 結束時間</label>
-            <input type="date" class="input" v-model="endDate" name="" id="end">
+            <input type="date"  v-model="startDate" name="" id="start" class="form-control input-short form-control-sm">
+            <input type="date" v-model="endDate" name="" id="end" class="form-control input-short form-control-sm form-check-inline">
             
-            <button type="submit" @click="getQuiz()" class="btn"><img src="../components/svg/search.svg" alt=""></button>
+            <button type="submit" @click="getQuiz()" class="btn  btn-outline-secondary sm"><img src="../components/svg/search.svg" alt=""></button>
         </div>
     
-        <div>
-            <div v-for="status in statuses" :key="status">
-                <input type="checkbox" :id="status" :value="status" v-model="selectedStatuses">
-                <label :for="status">{{ status }}</label>
-            </div>
+        <div v-for="status in statuses" :key="status" class="form-check form-check-inline">
+            <input type="checkbox" :id="status" :value="status" v-model="selectedStatuses" class="btn-check">
+            <label :for="status" class="btn btn-outline-secondary">{{ status }}</label>
         </div>
     </div>
     <div class="container">
-        <!-- <a @click="deleteAlert()"><img src="../components/svg/delete.svg" alt=""></a> -->
-        <!-- <RouterLink to="/addQuiz"><img src="../components/svg/create.svg" alt=""></RouterLink> -->
         <table class="table">
             <thead>
                 <tr>
-                    <!-- <th><input type="checkbox" v-model="allSelected"></th> -->
                     <th>NO.</th>
                     <th>標題</th>
                     <th>狀態</th>
@@ -214,7 +199,6 @@ export default{
             </thead>
             <tbody>
                 <tr class="tr" v-for="quiz in filteAndPaginateQuiz" :key="quiz.id">
-                    <!-- <td><input type="checkbox" :value="quiz.id" v-model="selectedIdList" @change="checkAllSelected"></td> -->
                     <td>{{ quiz.id }}</td>
                     <td v-if="quizStatus(quiz).status == '開放中'"><router-link v-if="quizStatus(quiz).status == '開放中'" :to="`/fillinPage/${quiz.id}`" class="link-text">{{ quiz.name }}</router-link></td>
                     <td v-else>{{ quiz.name }}</td>
@@ -223,22 +207,21 @@ export default{
                         <span v-if="quizStatus(quiz).days">{{ quizStatus(quiz).days}}</span>
                         <span v-else-if="quizStatus(quiz).hours">{{ quizStatus(quiz).hours }}</span>
                     </td>
-                    <td>{{quiz.startDate}}</td>
-                    <td>{{quiz.endDate}}</td>
-                    <td><a href=""><img v-if="quizStatus(quiz).status !== '尚未開始'" src="../components/svg/watch.svg" alt=""></a></td>
+                    <td><p class="text-muted">{{quiz.startDate}}</p></td>
+                    <td><p class="text-muted">{{quiz.endDate}}</p></td>
+                    <td><router-link :to="`/Statistics/${quiz.id}`"><img v-if="quizStatus(quiz).status !== '尚未開始'" src="../components/svg/watch.svg" alt=""></router-link></td>
                 </tr>
             </tbody>
         </table>
-        <div class="pages">
-            <button v-if="currentPage > 1" @click="prevPage()">上一頁</button>
+        <div class="pagination justify-content-center">
+            <button class="page-link" v-if="currentPage > 1" @click="prevPage()">上一頁</button>
             <!-- 頁碼 -->
-            <a href="#" class="pages" v-for="page in pagesNum" :key="page"
-                @click="() => currentPage = page" :class="{'currentPage' : page === currentPage}">
+            <a href="#" class="page-link" v-for="page in pagesNum" :key="page"
+                @click="() => currentPage = page" :class="{'active' : page === currentPage}">
                 {{ page }}</a>
-            <button v-if="totalPage > 1 && currentPage < totalPage" @click="nextPage()">下一頁</button>
+            <button  class="page-link" v-if="totalPage > 1 && currentPage < totalPage" @click="nextPage()">下一頁</button>
         </div>
     </div>
-    <!-- <FillinPage class="test" :quizData="currentQuiz"/> -->
 </template>
 
 <style scoped lang="scss">
@@ -262,7 +245,11 @@ export default{
         color: white;
         border-radius: 50%;
     }
-
+    .active{
+        border: none;
+        background-color: var(--blue);
+        color: white;
+    }
     .status{
         display: inline-block;
         color: white;
@@ -284,5 +271,12 @@ export default{
     .notPublished{
         background-color: var(--grey);
     }
+    .sm{
+        scale: .80;
+    }
+    .container{
+        margin-top: 5vh;
+        padding: 5%;
 
+    }
 </style>

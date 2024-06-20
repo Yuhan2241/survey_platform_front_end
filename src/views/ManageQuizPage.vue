@@ -204,29 +204,27 @@ export default{
     <div class="search container">
         <div>
             <label for="searchName">搜尋問卷</label>
-            <input type="search" class="input" v-model="name" placeholder="請輸入問卷名稱" id="searchName">
+            <input type="search" v-model="name" placeholder="請輸入問卷名稱" id="searchName" class="form-control form-control-sm">
         </div>
-        <div >
+        <div>
             <label for="start">開始時間</label>
-            <input type="date" class="input"  v-model="startDate" name="" id="start">
-
             <label for="end"> ~ 結束時間</label>
-            <input type="date" class="input" v-model="endDate" name="" id="end">
-            
-            <button type="submit" @click="getQuiz()" class="btn"><img src="../components/svg/search.svg" alt=""></button>
+            <input type="date"  v-model="startDate" name="" id="start" class="form-control input-short form-control-sm">
+            <input type="date" v-model="endDate" name="" id="end" class="form-control input-short form-control-sm form-check-inline">
+            <button type="submit" @click="getQuiz()" class="btn  btn-outline-secondary sm"><img src="../components/svg/search.svg" alt=""></button>
         </div>
     
         <div>
-            <div v-for="status in statuses" :key="status">
-                <input type="checkbox" :id="status" :value="status" v-model="selectedStatuses">
-                <label :for="status">{{ status }}</label>
+            <div v-for="status in statuses" :key="status" class="form-check form-check-inline">
+                <input type="checkbox" :id="status" :value="status" v-model="selectedStatuses" class="btn-check">
+                <label :for="status" class="btn btn-outline-secondary">{{ status }}</label>
             </div>
         </div>
     </div>
     <div class="container">
-        <a @click="deleteAlert()"><img src="../components/svg/delete.svg" alt=""></a>
-        <RouterLink to="/addQuiz"><img src="../components/svg/create.svg" alt=""></RouterLink>
-        <table class="table">
+        <a @click="deleteAlert()" class="btn btn-outline-danger"><img src="../components/svg/delete.svg" alt=""></a>
+        <RouterLink to="/addQuiz" class="btn btn-light"><img src="../components/svg/create.svg" alt=""></RouterLink>
+        <table class="table table-hover">
             <thead>
                 <tr>
                     <th><input type="checkbox" v-model="allSelected"></th>
@@ -250,20 +248,21 @@ export default{
                     </td>
                     <td>{{quiz.startDate}}</td>
                     <td>{{quiz.endDate}}</td>
-                    <td><a href=""><img src="../components/svg/watch.svg" alt=""></a></td>
+                    <td><router-link :to="`/Statistics/${quiz.id}`">
+                        <img v-if="quizStatus(quiz).status !== '尚未開始' && quizStatus(quiz).status !== '未發布'" src="../components/svg/watch.svg" alt="">
+                    </router-link></td>
                 </tr>
             </tbody>
         </table>
-        <div class="pages">
-            <button v-if="currentPage > 1" @click="prevPage()">上一頁</button>
+        <div class="pagination justify-content-center">
+            <button class="page-link" v-if="currentPage > 1" @click="prevPage()">上一頁</button>
             <!-- 頁碼 -->
-            <a href="#" class="pages" v-for="page in pagesNum" :key="page"
-                @click="() => currentPage = page" :class="{'currentPage' : page === currentPage}">
+            <a href="#" class="page-link" v-for="page in pagesNum" :key="page"
+                @click="() => currentPage = page" :class="{'active' : page === currentPage}">
                 {{ page }}</a>
-            <button v-if="totalPage > 1 && currentPage < totalPage" @click="nextPage()">下一頁</button>
+            <button  class="page-link" v-if="totalPage > 1 && currentPage < totalPage" @click="nextPage()">下一頁</button>
         </div>
     </div>
-    
 </template>
 
 <style scoped lang="scss">
@@ -274,13 +273,10 @@ export default{
         border-top: 1px solid black;
     }
 
-    .currentPage{
-        display: inline-block;
-        width: 20px;
-        height: 20px;
+    .active{
+        border: none;
         background-color: var(--blue);
         color: white;
-        border-radius: 50%;
     }
 
     .status{
@@ -303,6 +299,13 @@ export default{
     }
     .notPublished{
         background-color: var(--grey);
+    }
+    .sm{
+        scale: .80;
+    }
+    .container{
+        margin-top: 5vh;
+        padding: 5%;
     }
 
 </style>

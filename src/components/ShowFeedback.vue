@@ -137,21 +137,22 @@ export default{
             </table>
             <!-- <span>{{ feedbackList }}</span> -->
         <!-- 頁碼 -->
-        <div class="pages">
-            <button v-if="currentPage > 1" @click="prevPage()">上一頁</button>
-            <a href="#" class="pages" v-for="page in pagesNum" :key="page"
-                @click="() => currentPage = page" :class="{'currentPage' : page === currentPage}">
+        <div class="pagination justify-content-center">
+            <button class="page-link" v-if="currentPage > 1" @click="prevPage()">上一頁</button>
+            <!-- 頁碼 -->
+            <a href="#" class="page-link" v-for="page in pagesNum" :key="page"
+                @click="() => currentPage = page" :class="{'active' : page === currentPage}">
                 {{ page }}</a>
-            <button v-if="totalPage > 1 && currentPage < totalPage" @click="nextPage()">下一頁</button>
+            <button  class="page-link" v-if="totalPage > 1 && currentPage < totalPage" @click="nextPage()">下一頁</button>
         </div>
         </div>
 
         <div v-else>
             <FeedbackPreview  @next="showNextFillin" @prev="showPrevFillin"
             :fillinData="currentFillin" :id="fillinId">
-            <button v-show="fillinId>0" @click="showPrevFillin()" class="btn">前一個</button>
+            <button v-show="fillinId>0" @click="showPrevFillin()" class="btn-custom">前一個</button>
             <span>{{ fillinId+1 }}/{{ feedbackList.length }}</span>
-            <button v-show="fillinId<feedbackList.length-1" @click="showNextFillin()" class="btn">後一個</button>
+            <button v-show="fillinId<feedbackList.length-1" @click="showNextFillin()" class="btn-custom">後一個</button>
             <button type="button" @click="showPreview()" class="btn">返回列表</button>
             </FeedbackPreview>
         </div>
@@ -161,4 +162,12 @@ export default{
 span{
     margin: auto;
 }
+textarea{
+    resize:none;
+}
+.page-link.active{
+        border: none;
+        background-color: var(--blue);
+        color: white;
+    }
 </style>

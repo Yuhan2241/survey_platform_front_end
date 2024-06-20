@@ -11976,20 +11976,59 @@ body {
   font-weight: 600;
   text-rendering: optimizeLegibility;
   display: flex;
-  height: auto;
   width: 100dvw;
   flex-direction: column;
 }
 
 .container {
-  border: 1px solid black;
   background-color: white;
-  width: 65vw;
+  width: 75vw;
   height: auto;
-  margin: 0;
-  padding: 5%;
+  margin-bottom: 5%;
+  padding: 5% 10%;
+  border-radius: 15px;
 }
 
-input {
-  margin: 0 5px;
+.btn-custom {
+  width: 100px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  /* box-shadow: 1px 1px 2px var(--blue-light); */
+  background-color: var(--grey-soft);
+}
+
+.btn-custom:hover {
+  background-color: var(--blue);
+}
+
+.btn-check:checked + .btn, :not(.btn-check) + .btn:active, .btn:first-child:active, .btn.active, .btn.show {
+  background-color: var(--blue-medium);
+}
+
+.input-short {
+  width: 50%;
+  margin-bottom: 10px;
+}
+
+.form-check {
+  margin: 15px 0;
+}
+
+.btn-submit {
+  background-color: var(--blue-medium);
+  color: white;
+}
+
+.page-link {
+  color: var(--blue-medium);
+}
+
+.tr:hover {
+  background-color: var(--blue-light-soft);
+}
+
+.tr-first {
+  background-color: var(--blue);
+  color: #fff;
 }/*# sourceMappingURL=custom.css.map */

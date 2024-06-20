@@ -73,23 +73,8 @@ body {
   text-decoration: underline;
 
 }
-nav {
-  width: 15vw;
-  height: 100dvh;
-  text-align: center;
-  position: fixed;
-  left: 0;
-  background: var(--blue-dark);
-}
 
-.container{
-  border: 1px solid black;
-  background-color: #ffff;
-  width: 65vw;
-  height: auto;
-  margin: 0;
-  padding: 5%;
-}
+
 
 .btn{
   width: 100px;
@@ -100,9 +85,7 @@ nav {
   background-color: var(--grey-soft);
   margin: auto;
 }
-.btn:hover{
-  cursor: pointer;
-}
+
 .btn:active{
   scale: 0.95;
 }

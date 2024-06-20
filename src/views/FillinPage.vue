@@ -1,5 +1,6 @@
 <script>
 import Swal from 'sweetalert2'
+
 export default{
     data() {
         return {
@@ -10,10 +11,15 @@ export default{
             phone: "",
             email : "",
             age : "",
-            fillin_list:[],
+            fillinList:[],
             
+            // fillinObj:{
+            //     answer: "",
+            //     type: "",
+            //     required: true
+            // },
             isDisabled: false,
-            
+            statusCode:"200"
         };
     },
     mounted(){
@@ -45,25 +51,17 @@ export default{
                 console.log(this.questionList)
             })
         },
-        //送出問卷
-        fillin(){
-            let Obj={
-                "quiz_id": 16,
-                "name": this.name,
-                "phone": "0906123456",
-                "email" : "abc@gmail.com",
-                "age" : 45,
-                "fillin_list" : [ 
-            {
-                "question_id": 1,
-                "question": "便當類吃什麼",
-                "options":"雞腿;排骨;炸雞排;鱈魚",
-                "answer": "排骨",
-                "type": "radio",
-                "required": true
-            }]
-            }
-            fetch("http://localhost:8080/quiz/search",{
+        fillin(){  
+            const Obj = {
+                quiz_id: this.quizId,
+                name: this.name,
+                phone: this.phone,
+                email: this.email,
+                age: this.age,
+                fillin_list: this.answerList
+            };
+            
+            fetch("http://localhost:8080/quiz/fillin",{
                 method:'POST',
                 headers:{
                     "Content-Type":"application/json"
@@ -72,19 +70,27 @@ export default{
             })
             .then(res => res.json())
             .then(data => {
-                this.statusCode = data.statusCode
-                this.quiz = data.quizList[0]
-                // this.questions = data.quizList[0].questions
-                this.questionList = data.quizList[0].questions
-                this.questionList = JSON.parse(this.questionList)//將字串轉回陣列
-                this.is_required = this.questionList[0].is_required
-                console.log(this.questionList)
+                console.log(data)
+                if(data.statusCode == 200){
+                    Swal.fire({
+                        title: "已送出",
+                        text: "感謝您的填寫!",
+                        icon: "success"
+                    });
+                }else{
+                    Swal.fire({
+                        title: "送出失敗",
+                        text: "請檢查您的填寫內容!",
+                        icon: "warning"
+                    });
+                }
             })
         },
         //鎖定作答內容
         disableInputs() {
             const inputElements = this.$refs.inputContainer.querySelectorAll('input')
             inputElements.forEach(input => {
+                this.isDisabled = true
                 input.setAttribute('readonly', 'true') //設定成唯讀
                 input.classList.add('form-control-plaintext')//移除input外框
             });
@@ -98,7 +104,7 @@ export default{
             this.phone = "",
             this.email = "",
             this.age = "",
-            this.fillin_list = []
+            this.fillinList = []
         },
         addClassToInputs() {
         const inputElements = this.$refs.inputContainer.querySelectorAll('input');
@@ -112,56 +118,82 @@ export default{
             input.classList.remove('form-control-plaintext');
         });
         }
+    },
+    computed:{
+        answerList(){
+            return this.questionList.map((question, index) => ({
+                question_id : question.id,
+                question : question.title,
+                options : question.options,
+                answer : this.fillinList[index],
+                type: question.type,
+                required: question.is_required
+            }));
+        } 
+        
+        
     }
             
 }
 
 </script>
 <template>
+    
     <div class="container" ref="inputContainer">
         <span>{{ quiz.startDate +"~"+ quiz.endDate }}</span>
         <h1>{{ quiz.name }}</h1>
         <p>問卷描述: {{ quiz.description }}</p>
         <div class="mb-3">
-            <label for="userName" class="form-label ">姓名</label>
-            <input type="text" v-model="name" class="form-contral" id="userName" required>
+            <label for="userName" class="form-label ">姓名 (必填)</label>
+            <input type="text" v-model="name" class="form-control" id="userName" required :readonly="isDisabled">
         </div>
         <div class="mb-3">
-            <label for="phone" class="form-label">手機</label>
-            <input type="text" v-model="phone" class="form-contral" id="phone" required>
+            <label for="phone" class="form-label">手機 (必填)</label>
+            <input type="text" v-model="phone" class="form-control" id="phone" required :readonly="isDisabled">
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" v-model="email" class="form-contral" id="email">
+            <input type="email" v-model="email" class="form-control" id="email" :readonly="isDisabled">
         </div>
         <div class="mb-3">
             <label for="age" class="form-label">年齡</label>
-            <input type="number" v-model="age" class="form-contral" id="age">
+            <input type="number" v-model="age" min="13" class="form-control" id="age" :readonly="isDisabled">
         </div>
-        <div v-for="question in questionList" :key="question.id">
-            <h3>{{ question.id + ". " + question.title }}<span v-if="question.is_required" class="required">必填</span></h3>
+        <div v-for="(question,index) in questionList" :key="index">
+            <h3>{{ question.id + ". " + question.title }}
+                <span v-if="question.is_required" class="required">必填</span>
+            </h3>
             <div v-if="question.type === '單選題'">
                 <div v-for="(option, i) in question.options.split(';')" :key="i">
-                <input type="radio"  :value="option" class="form-contral" name="'question_' + index" :disabled="isDisabled" 
-                :class="{'form-control-plaintext': isDisabled}">
-                <label for="'question_' + index">{{ option }}</label>
+                <input v-model="fillinList[index]" type="radio"  :value="option"   :name="'question_' + index" :disabled="isDisabled" 
+                :class="{'form-control-plaintext': isDisabled}" class="form-check-input">
+                <label :for="'question_' + index" class="form-check-label">{{ option }}</label>
                 </div>
             </div>
             <div v-else-if="question.type === '多選題'">
                 <div v-for="(option, i) in question.options.split(';')" :key="i">
-                <input type="checkbox" :value="option" class="form-contral" :name="'question_' + index" :disabled="isDisabled" 
+                <input v-model="fillinList[index]" type="checkbox" :value="option" class="form-check-input" :name="'question_' + index" :disabled="isDisabled" 
                 :class="{'form-control-plaintext': isDisabled}">
-                <label for="'question_' + index">{{ option }}</label>
+                <label :for="'question_' + index" class="form-check-label">{{ option }}</label>
                 </div>
             </div>
             <div v-else-if="question.type === '簡述題'">
-                <textarea v-model="question.fillin_list" :disabled="isDisabled" 
-                :class="{'form-control-plaintext': isDisabled}" class="form-contral"></textarea>
+                <textarea v-model="fillinList[index]" :disabled="isDisabled" 
+                :class="{'form-control-plaintext': isDisabled}" class="form-control"></textarea>
+            </div>
+            </div>
+        <div class="flexbox">
+            <div>
+            <button @click="enableInputs" class="btn-custom">修改作答</button>
+            <button @click="clearInputs(),enableInputs()" class="btn-custom">清除重填</button>
+            </div>
+        <div>
+        <button v-if="!isDisabled" @click="disableInputs" class="btn-custom btn-submit">作答預覽</button>
+        <button v-else @click="fillin()" class="btn-custom btn-submit">送出問卷</button>
             </div>
         </div>
-        <button @click="enableInputs">修改作答</button>
-        <button @click="clearInputs">清除重填</button>
-        <button @click="disableInputs">作答預覽</button>
+        
+        <!-- {{ fillinList }} -->
     </div>
 
 </template>
@@ -179,5 +211,16 @@ export default{
     border-radius: 7px;
     font-size: 18px;
     background: var(--orange);
+}
+.btn:hover{
+    background-color: var(--blue);
+}
+.flexbox{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5vh;
+}
+.btn-submit{
+    margin-left: 15px;
 }
 </style>

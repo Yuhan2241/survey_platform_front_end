@@ -5,6 +5,14 @@ export default {
     data() {
         return {
         barOptions: {
+            emphasis: {
+                focus: 'self'
+            },
+            title:{
+                text:'',
+                top:'5%',
+                left:'5%'
+            },
             tooltip: {
             trigger: 'item'
             },
@@ -12,22 +20,34 @@ export default {
             top: '15%',
             left: 'center'
             },
+            
+            
+            label:{
+                formatter:'{b}: {c}票 ({d}%) '
+            },
             series: [
             {
-                name: '便當',
+                name: '',
                 type: 'pie',
                 radius: ['50%', '80%'],
                 center: ['50%', '80%'],
                 startAngle: 180,
                 endAngle: 360,
-                data: []
-            }
+                data: [],
+                stillShowZeroSum: false,
+                itemStyle: {
+                borderRadius: 6,
+                borderColor: '#fff',
+                borderWidth: 2
+            },
+            },
             ]
         }
         };
     },
     mounted() {
         //將物件轉為鍵值對的格式 {name:, value}並且以數量多到少排序
+        this.barOptions.title.text = this.chartName
         this.barOptions.series[0].data = Object.entries(this.chartData)
         .sort((a, b) => b[1] - a[1]).map(([name, value]) => ({ name, value }));
         let chartDom = this.$refs.chart
@@ -35,7 +55,7 @@ export default {
         myChart.setOption(this.barOptions)
     },
     props:[
-        'chartData'
+        'chartData','chartName'
     ],
     resizeChart() {
         if (this.myChart) {
@@ -55,5 +75,10 @@ p{
     width: 75%;
     height: 0.5px;
     background: var(--grey);
+}
+
+div{
+    background: white;
+    border-radius: 15px;
 }
 </style>

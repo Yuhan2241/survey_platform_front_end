@@ -1,5 +1,5 @@
 <script>
-import * as echarts from 'echarts'
+
 import StatisticsChart from './StatisticsChart.vue';
 export default {
     data(){
@@ -18,7 +18,7 @@ export default {
     methods:{
         getStatistics(){
             let obj = {
-                quiz_id : 20
+                quiz_id : this.$route.params.id
             }
             fetch("http://localhost:8080/quiz/statistics",{ 
                 method:'POST', 
@@ -42,12 +42,12 @@ export default {
 <template>
     <span>即時統計結果</span>
     <h1>{{ quizName }}</h1>
-    <div v-for="(data, id) in chartData" :key="id" :chartData="data">
-        {{id}}
-    <StatisticsChart :chartData="data">
+    <div v-for="(data, id) in chartData" :key="id" :chartData="data" >
+        <!-- {{id}} -->
+    <StatisticsChart :chartData="data" :chartName="id">
     </StatisticsChart>
     </div>
-        
+    <slot></slot>
     
 </template>
 

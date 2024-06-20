@@ -39,11 +39,9 @@ export default{
             //正在編輯的題目
             editItem:[],
             showEditItem: false,
-            //現在時間
-            currentTime: new Date(),
             quizEditable: false,
             preview:false,
-            statusCode:'',
+            statusCode:'200',
             previewVisible: false,
         }
     },
@@ -56,6 +54,7 @@ export default{
             this.getQuiz()
             
         }else {
+            
             // 如果沒有id就初始化一個新的問卷物件
             this.quiz = {
                 id: 1,
@@ -81,7 +80,7 @@ export default{
             })
             .then(res => res.json())
             .then(data => {
-                this.statusCode = data.statusCode
+                
                 let quizList = data.quizList[0]
                 this.quizDetail.name = quizList.name
                 this.quizDetail.description = quizList.description
@@ -96,13 +95,13 @@ export default{
         // 建立or修改問卷
         createOrUpdate(){
             let createObj = {
-                "id" : this.quizId,
-                "name": this.quizDetail.name,
-                "description": this.quizDetail.description,
-                "start_date" : this.quizDetail.startDate,
-                "end_date" : this.quizDetail.endDate,
-                "question_list" : this.questionList,
-                "is_published" : this.isPublished
+                id : this.quizId,
+                name: this.quizDetail.name,
+                description: this.quizDetail.description,
+                start_date : this.quizDetail.startDate,
+                end_date : this.quizDetail.endDate,
+                question_list : this.questionList,
+                is_published : this.isPublished
             }
             fetch("http://localhost:8080/quiz/create_update",{ //後端設定的地址
                 method:'POST', //方法
@@ -114,6 +113,7 @@ export default{
             .then(res => res.json())
             .then(data => {
                 console.log(data)
+                this.statusCode = data.statusCode
                 })
         },
         
@@ -136,7 +136,7 @@ export default{
                 this.questionList.splice(index, 1)
             }
             for (let i = 0; i < this.questionList.length; i++) {
-                this.questionList[i].id = i ;
+                this.questionList[i].id = i+1 ;
             }
         },
         //編輯問題
@@ -150,6 +150,21 @@ export default{
             if(this.editItem){
                 this.questionList.splice(this.editItem.id-1, 1, this.editItem)
             }
+            const Toast = Swal.mixin({
+            toast: true,
+            position: "top",
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+            });
+            Toast.fire({
+            icon: "success",
+            title: "修改成功!!"
+            });
         },
         //讓編輯區域可視化
         editItemVisible(){
@@ -163,8 +178,8 @@ export default{
         //修改問卷彈出訊息
         saveQuizMsg(){
             if(this.statusCode == 200){
-                Swal.fire("修改成功!")
-                }else{
+                Swal.fire("成功!已儲存至未發布問卷")
+            }else{
                 Swal.fire("失敗，請再試一次!")
             }
             this.statusCode = ""
@@ -179,6 +194,7 @@ export default{
                 Swal.fire("發布失敗，請再試一次!")
             }
             this.statusCode = ""
+            
         },
         // sentToQuizPage(){
         //     this.$emit('quizVal', this.quizDetail)
@@ -187,7 +203,8 @@ export default{
             if(this.isPublished == true || quizDetail.startDate < currentTime){
                 quizEditable = false //設為不可編輯
             }
-        }
+        },
+        
     },
     
 }
@@ -198,91 +215,109 @@ export default{
         <div  class="container">
             <form class="quizSubject context" disabled>
                 <ul>
-                    <label for="quizTitle"><li>問卷名稱</li></label>
-                    <input class="input" type="text" v-model="quizDetail.name" placeholder="請輸入問卷標題" id="quizTitle" required>
-                    <label for="quizDetail"><li>問卷說明</li></label>
-                    <textarea class="" v-model="quizDetail.description" placeholder="請輸入問卷說明" id="quizDetail" required></textarea>
-                    <li>開始時間(須為今日之後)</li>
-                    <input class="input" v-model="quizDetail.startDate" type="date" required>
-                    <li>結束時間</li>
-                    <input class="input" v-model="quizDetail.endDate" type="date" required>
+                    <label for="quizTitle">問卷名稱</label>
+                    <input type="text" v-model="quizDetail.name" placeholder="請輸入問卷標題" id="quizTitle" class="form-control" required>
+                    <label for="quizDetail">問卷說明</label>
+                    <textarea v-model="quizDetail.description" placeholder="請輸入問卷說明" id="quizDetail" class="form-control" required></textarea>
+                    開始日期(須為今日之後)
+                    <input v-model="quizDetail.startDate" type="date" class="form-control input-short" required>
+                    結束日期
+                    <input v-model="quizDetail.endDate" type="date" class="form-control input-short" required>
                 </ul>
             </form>
         </div>
     
     <div class="container">
         <div class="questions context" >
-            <ul>
-                <label for="quesTitle" required><li>編輯題目</li></label>
-                <input class="input" type="text" v-model="question.title" id="quesTitle">
+            <div>
+                <label for="quesTitle" class="form-label" required>編輯題目</label>
+                <input type="text" v-model="question.title" id="quesTitle" class="form-control">
+            </div>
+                
+            <div>
+                <label for="quesType" class="form-label" required>題目類型</label>
                 <select v-model="question.type" name="quesType" id="quesType">
                     <option v-for="option in types" :value="option" :key="option">{{ option }}</option>
                 </select>
-                <input type="checkbox" v-model="question.is_required" id="isRequired">
-                <label for="isRequired" >必填</label>
-                <label for="options"><li>選項 (多個選項間請以分號;分隔，例:晴天;雨天)</li></label>
-                <textarea class="" v-model="question.options" placeholder="" id="options"></textarea>
-                <button class="btn" @click="addQuestion()">加入</button>
-                <!-- 題目列表 -->
-                <table class="table" id="itxst">
-                        <tr class="tr-first">
-                            <!-- <td><input type="checkbox"></td> -->
-                            <td>NO.</td>
-                            <td>題目</td>
-                            <td>問題種類</td>
-                            <td>必填</td>
-                            <td>編輯</td>
-                        </tr>
-                    
-                        <tr v-for="q in questionList" :key="q.id" class="tr">
-                            <!-- <td><input type="checkbox"></td> -->
-                            <td>{{q.id}}</td>
-                            <td>{{q.title}}</td>
-                            <td>{{q.type}}</td>
-                            <td v-if="q.is_required">必填</td>
-                            <td v-else></td>
-                            <td>
-                                <!-- 刪除問題 -->
-                                <button type="button" @click="removeQuestion(q.id)" class="alert"><img src="@/components/svg/delete.svg" alt=""></button>
-                                <!-- 編輯問題 -->
-                                <button type="button" @click="editQuestion(q.id),editItemVisible()"><img src="@/components/svg/edit.svg" alt=""></button>
-                            </td>
-                        </tr>
-                    
-                </table>
-                <div v-if="showEditItem == true">
-                    <label for="quesTitle"  required><li>編輯題目</li></label>
-                    <input class="input" type="text" v-model="editItem.title">
-                    <select v-model="editItem.type" name="quesType" id="quesType">
-                        <option value="單選題">單選題</option>
-                        <option value="多選題">多選題</option>
-                        <option value="簡述題">簡述題</option>
-                    </select>
-                    <input type="checkbox" v-model="editItem.is_required" id="isRequired2">
-                    <label for="isRequired2">必填</label>
-                    <label for="options"><li>選項</li></label>
-                    <textarea class="" v-model="editItem.options"></textarea>
-                    <button class="btn" @click="editItemVisible()">取消</button>
-                    <button class="btn" @click="updateEdit(),editItemVisible()">確認修改</button>
-                </div>
-            </ul>
+            </div>
+                
+            <div>
+                <input type="checkbox" v-model="question.is_required" id="isRequired" class="form-check-input" >
+                <label for="isRequired" class="form-label">必填</label>
+            </div>
+                
+            <div v-if="question.type !=='簡述題'" class="form-check form-check-inline">
+                <label for="options" class="form-label"><p>選項 (多個選項間請以分號;分隔，例:晴天;雨天)</p></label>
+            <textarea class="form-control" v-model="question.options" placeholder="" id="options"></textarea>
+            </div>
+                
+
+            <button class="btn add btn-outline-info" @click="addQuestion()">加入</button>
+            <!-- 題目列表 -->
+            <table class="table" id="itxst">
+                    <tr class="tr-first">
+                        <td>NO.</td>
+                        <td>題目</td>
+                        <td>問題種類</td>
+                        <td>必填</td>
+                        <td>編輯</td>
+                    </tr>
+                
+                    <tr v-for="q in questionList" :key="q.id" class="tr">
+                        <td>{{q.id}}</td>
+                        <td>{{q.title}}</td>
+                        <td>{{q.type}}</td>
+                        <td v-if="q.is_required">必填</td>
+                        <td v-else></td>
+                        <td>
+                            <!-- 刪除問題 -->
+                            <button type="button" @click="removeQuestion(q.id)" class="btn short btn-outline-danger"><img src="@/components/svg/delete.svg" alt=""></button>
+                            <!-- 編輯問題 -->
+                            <button type="button" @click="editQuestion(q.id),editItemVisible()" class="btn short btn-outline-info"><img src="@/components/svg/edit.svg" alt=""></button>
+                        </td>
+                    </tr>
+                
+            </table>
+            <div v-if="showEditItem == true">
+                <label for="quesTitle"  required>編輯題目</label>
+                <input type="text" v-model="editItem.title" class="form-control">
+                <select v-model="editItem.type" name="quesType" id="quesType" class="form-select">
+                    <option value="單選題">單選題</option>
+                    <option value="多選題">多選題</option>
+                    <option value="簡述題">簡述題</option>
+                </select>
+                <input type="checkbox" v-model="editItem.is_required" class="form-check-input" name="isRequired2">
+                <label for="isRequired2">必填</label>
+                <label for="options">選項</label>
+                <textarea v-model="editItem.options" class="form-control" name="options"></textarea>
+                <button class="btn" @click="editItemVisible()">取消</button>
+                <button class="btn" @click="updateEdit(),editItemVisible()">確認修改</button>
+            </div>
             
         </div>
-            <router-link to="/manageQuizPage"><button class="btn">取消</button></router-link>
-            <button class="btn" @click="createOrUpdate(),saveQuizMsg()">儲存修改</button>
-            <button class="btn btn-submit" @click="showPreview()">問卷預覽</button>
+        <div class="flexbox">
+            <router-link to="/manageQuizPage"><button class="btn-custom">取消</button></router-link>
+                <button class="btn-custom" @click="createOrUpdate(),saveQuizMsg()">儲存修改</button>
+                <button class="btn-custom btn-submit " @click="showPreview()">問卷預覽</button>
+            
+        </div>
     </div>
 </div>
     <div v-else>
         <QuizPreview :quizData="quizDetail" :questions="questionList">
-        <button type="button" @click="showPreview()" class="btn">返回修改</button>
-        <button type="button" @click="publishQuiz()" class="btn">發布</button>
+        <div class="flexbox">
+            <button type="button" @click="showPreview()" class="btn">返回修改</button>
+            <button type="button" @click="publishQuiz()" class="btn btn-submit">發布</button>
+        </div>
+        
         </QuizPreview>
     </div>
 </template>
 
 <style scoped lang="scss">
-
+table{
+    margin-bottom: 15vh;
+}
 .options{
     width: 90%;
     border: 1px solid black;
@@ -304,10 +339,23 @@ export default{
         color: var(--color-text);
     }
 }
+.add{
+    display: inline-block;
+    margin-bottom: 30px;
+}
 textarea{
     resize: none;
 }
-.disable{
+.short{
+    width: 50px;
+    margin-left: 5px;
+}
 
+.flexbox{
+    display: flex;
+    justify-content: space-around;
+}
+.btn-submit{
+    margin-left: 15px;
 }
 </style>

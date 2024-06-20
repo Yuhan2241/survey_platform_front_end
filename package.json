@@ -18,7 +18,7 @@
     "vue": "^3.4.21",
     "vue-echarts": "^6.7.3",
     "vue-router": "^4.3.0",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@types/sortablejs": "^1.15.8",

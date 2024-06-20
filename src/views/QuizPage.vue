@@ -48,6 +48,10 @@ export default{
 input{
         display: none;
     }
+.options{
+    margin-left: 10vw;
+    margin-top: 5vh;
+}
 .label{
         border-radius: 5px 20px 0 0;
         background: #86BBD8;

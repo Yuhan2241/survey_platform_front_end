@@ -4,19 +4,16 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/frontPage" :key="$route.fullPath">前台首頁</RouterLink>
-      <!-- <RouterLink to="/fillinPage">填寫問卷</RouterLink> -->
-      <RouterLink to="/manageQuizPage" :key="$route.fullPath">後台首頁</RouterLink>
+    <nav >
+      <RouterView :key="$route.fullPath"/> </nav>
+      <h3>問卷平台</h3>
+      <RouterLink  to="/frontPage" :key="$route.fullPath">填寫問卷</RouterLink>
+      <RouterLink to="/manageQuizPage" :key="$route.fullPath">後台管理</RouterLink>
       <RouterLink to="/addQuiz">新增問卷</RouterLink>
-      <RouterLink to="/Statistics/20">測試統計</RouterLink>
-    </nav>
-    
+      <RouterLink to="/navBar">navTest</RouterLink>
+   
   </header>
-<div class="right">
-  <RouterView :key="$route.fullPath"/>
-</div>
+  
 </template>
 
 <style scoped lang="scss">
@@ -25,13 +22,23 @@ import { RouterLink, RouterView } from 'vue-router'
     margin: 0;
     box-sizing: border-box;
 }
-
-.right{
-  width: 75dvw;
-  position: absolute;
-  right: 0;
+nav {
+  width: 15vw;
+  height: 100dvh;
+  text-align: center;
+  // position: fixed;
+  left: 0;
+  background: var(--blue-dark);
 }
-
+// .right{
+//   width: 75dvw;
+//   position: absolute;
+//   right: 0;
+// }
+h3{
+  padding: 1rem;
+  color: #fff;
+}
 
 
 nav a.router-link-exact-active {
@@ -46,7 +53,7 @@ nav a:hover {
 
 nav a {
   display: block;
-  padding: 0 1rem;
+  padding: 1rem;
   border-left: 1px solid var(--color-border);
 }
 

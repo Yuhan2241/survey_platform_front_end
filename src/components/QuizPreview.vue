@@ -40,18 +40,20 @@ export default{
         <p>問卷描述: {{ quiz.description }}</p>
         <div>
             <ul>
-                <label for="userName"><li>姓名</li></label>
-                <input type="text"  class="input" id="userName" required readonly>
-                <label for="phone"><li>手機</li></label>
-                <input type="text" class="input" id="phone" required readonly>
-                <label for="email"><li>Email</li></label>
-                <input type="email" class="input" id="email" readonly>
-                <label for="age"><li>年齡</li></label>
-                <input type="number" class="input" id="age" readonly>
+                <label for="userName" class="form-label">姓名</label>
+                <input type="text"  class="form-control" id="userName" required readonly>
+                <label for="phone" class="form-label">手機</label>
+                <input type="text" class="form-control" id="phone" required readonly>
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" readonly>
+                <label for="age" class="form-label">年齡</label>
+                <input type="number" class="form-control" id="age" readonly>
             </ul>
         </div>
         <div v-for="(question, index) in questionList" :key="index">
-            <h3>{{ question.id + ". " + question.title }}</h3><span v-if="question.is_required == true">必填</span>
+            <h3>{{ question.id + ". " + question.title }}
+                <span v-if="question.is_required" class="required">必填</span>
+            </h3>
             <div v-if="question.type === '單選題'">
                 <div v-for="(option, i) in question.options.split(';')" :key="i">
                 <input type="radio" :name="'question_' + index" :value="option">{{ option }}
@@ -72,9 +74,17 @@ export default{
 </template>
 
 <style scoped>
-/* .preview{
-    position: absolute;
-    top: 0;
-    z-index: 2;
-} */
+.required{
+    display: inline-block;
+    color: white;
+    margin-left: 5px;
+    margin-top: 15px;
+    padding: 2px 5px;
+    border-radius: 7px;
+    font-size: 18px;
+    background: var(--orange);
+}
+textarea{
+    resize: none;
+}
 </style>

@@ -42,10 +42,16 @@ const router = createRouter({
       component: () => import('../views/FillinPage.vue')
     },
     {
-      path: '/Statistics/20',
+      path: '/Statistics/:id',
       name: 'Statistics',
       props:true,
       component: () => import('../components/Statistics.vue')
+    },
+    {
+      path: '/navBar',
+      name: 'navBar',
+      props:true,
+      component: () => import('../components/navBar.vue')
     }
         
   ]
