@@ -8,11 +8,6 @@ export default {
             emphasis: {
                 focus: 'self'
             },
-            title:{
-                text:'',
-                top:'5%',
-                left:'5%'
-            },
             tooltip: {
             trigger: 'item'
             },
@@ -47,7 +42,6 @@ export default {
     },
     mounted() {
         //將物件轉為鍵值對的格式 {name:, value}並且以數量多到少排序
-        this.barOptions.title.text = this.chartName
         this.barOptions.series[0].data = Object.entries(this.chartData)
         .sort((a, b) => b[1] - a[1]).map(([name, value]) => ({ name, value }));
         let chartDom = this.$refs.chart
@@ -55,7 +49,7 @@ export default {
         myChart.setOption(this.barOptions)
     },
     props:[
-        'chartData','chartName'
+        'chartData'
     ],
     resizeChart() {
         if (this.myChart) {

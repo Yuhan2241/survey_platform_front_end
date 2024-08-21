@@ -23,10 +23,10 @@ export default{
 
 </script>
 <template>
-    <div class="container preview">
+    <div class="container">
         <span>{{ fillin.quizStartDate +"~"+ fillin.quizEndDate }}</span>
-        <h1>{{ fillin.name }}</h1>
-        <p>問卷描述: {{ fillin.description }}</p>
+        <h1>{{ fillin.quizName }}</h1>
+        <p>問卷描述: {{ fillin.quizDescription }}</p>
         <div>
             <ul>
                 <label for="userName" class="form-label">姓名</label>

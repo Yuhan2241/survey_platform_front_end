@@ -3,7 +3,6 @@ import Swal from 'sweetalert2'
 export default{
     data(){
         return{
-            quizId:"",
             name: "",
             startDate :"",
             endDate : "",
@@ -55,9 +54,6 @@ export default{
             }
             return pageList
         },
-        // selectedId(id){
-        //     this.selectedIdList.push(id)
-        // }
     },
     methods:{
         //搜尋問卷
@@ -153,40 +149,34 @@ export default{
                 statusClass = "ended"
                 return {status, class: statusClass}
             }
-        },
-        showQuiz(quiz) {
-            this.currentQuiz = quiz
-            console.log(this.currentQuiz)
-        },
-    },
-    // components:{
-    //     FillinPage
-    // }
+        }
+    }
 }
 </script>
 
 <template>
     <div class="search container">
-        <div>
+        <div >
             <label for="searchName">搜尋問卷</label>
-            <input type="search" v-model="name" placeholder="請輸入問卷名稱" id="searchName" class="form-control form-control-sm">
+            <input type="search" v-model="name" placeholder="輸入問卷名稱" id="searchName" class="form-control form-control-sm">
         </div>
-        <div>
+        <div class="searchItem">
             <label for="start">開始時間</label>
-            <label for="end"> ~ 結束時間</label>
-            <input type="date"  v-model="startDate" name="" id="start" class="form-control input-short form-control-sm">
-            <input type="date" v-model="endDate" name="" id="end" class="form-control input-short form-control-sm form-check-inline">
-            
-            <button type="submit" @click="getQuiz()" class="btn  btn-outline-secondary sm"><img src="../components/svg/search.svg" alt=""></button>
+            <input type="date"  v-model="startDate" name="" id="start" class="form-control form-control-sm">
+            <label for="end">結束時間</label>
+            <input type="date" v-model="endDate" name="" id="end" class="form-control form-control-sm form-check-inline">
         </div>
-    
-        <div v-for="status in statuses" :key="status" class="form-check form-check-inline">
-            <input type="checkbox" :id="status" :value="status" v-model="selectedStatuses" class="btn-check">
-            <label :for="status" class="btn btn-outline-secondary">{{ status }}</label>
-        </div>
+        <button type="submit" @click="getQuiz()" title="搜尋" class="btn btn-outline-secondary btn-sm"><img src="../components/svg/search.svg" alt=""></button>
     </div>
     <div class="container">
-        <table class="table">
+        <div class="selector">
+            <span>篩選:</span>
+            <div v-for="status in statuses" :key="status" class="form-check form-check-inline">
+                <input type="checkbox" :id="status" :value="status" v-model="selectedStatuses" class="btn-check">
+                <label :for="status" class="btn btn-outline-secondary">{{ status }}</label>
+            </div>
+        </div>
+        <table class="table table-hover">
             <thead>
                 <tr>
                     <th>NO.</th>
@@ -207,9 +197,9 @@ export default{
                         <span v-if="quizStatus(quiz).days">{{ quizStatus(quiz).days}}</span>
                         <span v-else-if="quizStatus(quiz).hours">{{ quizStatus(quiz).hours }}</span>
                     </td>
-                    <td><p class="text-muted">{{quiz.startDate}}</p></td>
-                    <td><p class="text-muted">{{quiz.endDate}}</p></td>
-                    <td><router-link :to="`/Statistics/${quiz.id}`"><img v-if="quizStatus(quiz).status !== '尚未開始'" src="../components/svg/watch.svg" alt=""></router-link></td>
+                    <td>{{quiz.startDate}}</td>
+                    <td>{{quiz.endDate}}</td>
+                    <td><router-link :to="`/Statistics/${quiz.id}`"><img v-if="quizStatus(quiz).status !== '尚未開始'" src="../components/svg/watch.svg" class="watch"></router-link></td>
                 </tr>
             </tbody>
         </table>
@@ -225,31 +215,53 @@ export default{
 </template>
 
 <style scoped lang="scss">
-.test{
-    display: none;
-}
-    table{  
+    .col{
+        width: 100%;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    .search{
+        width: 13vw;
+        margin: 0;
+        padding: 10px;
+        position: fixed;
+        left: 1vw;
+        bottom: 5vh;
+        border-radius: 5px;
+        background: transparent;
+        color: #fff;
+    }
+    .searchItem{
+        margin-top: 15px;
+    }
+    .btn-sm{
+        margin-top: 20px;
+        background: #fff;
+    }
+    table{
+        width: 100%;
         border-collapse: collapse;
+        margin-top: 5%;
     }
+    th:nth-child(1), td:nth-child(1) { width: 5%; }
+    th:nth-child(2), td:nth-child(2) { width: 30%; }
+    th:nth-child(3), td:nth-child(3) { width: 20%; }
+    th:nth-child(6), td:nth-child(6) { width: 5%; }
     td{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         border-top: 1px solid black;
+        align-content: baseline;
     }
-    .tr:hover{
-        background: var(--orange-soft);
-    }
-    .currentPage{
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        background-color: var(--orange-soft);
-        color: white;
-        border-radius: 50%;
-    }
+
     .active{
         border: none;
         background-color: var(--blue);
         color: white;
     }
+
     .status{
         display: inline-block;
         color: white;
@@ -271,12 +283,13 @@ export default{
     .notPublished{
         background-color: var(--grey);
     }
-    .sm{
-        scale: .80;
+    .pagination{
+        margin-top: 5%;
     }
-    .container{
-        margin-top: 5vh;
-        padding: 5%;
-
+    .btn-light{
+        border: 1px solid gray;
+    }
+    .watch{
+        scale: 0.8;
     }
 </style>

@@ -11965,27 +11965,30 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 body {
-  min-height: 100vh;
+  height: 100dvh;
   color: var(--color-text);
   background: var(--color-background);
   transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
   font-family: "cwTeXYen", "Noto Sans TC", "Segoe UI", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   text-rendering: optimizeLegibility;
   display: flex;
-  width: 100dvw;
-  flex-direction: column;
 }
 
 .container {
   background-color: white;
-  width: 75vw;
-  height: auto;
-  margin-bottom: 5%;
-  padding: 5% 10%;
+  width: 70vw;
+  margin: 5% 0;
+  padding: 5% 3%;
   border-radius: 15px;
 }
 
@@ -12009,10 +12012,6 @@ body {
 .input-short {
   width: 50%;
   margin-bottom: 10px;
-}
-
-.form-check {
-  margin: 15px 0;
 }
 
 .btn-submit {

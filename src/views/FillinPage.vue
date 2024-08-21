@@ -4,27 +4,23 @@ import Swal from 'sweetalert2'
 export default{
     data() {
         return {
-            quiz: [],
+            quiz: {},
             quizId:"",
             questionList:[],
             name: "",
             phone: "",
             email : "",
             age : "",
-            fillinList:[],
-            
-            // fillinObj:{
-            //     answer: "",
-            //     type: "",
-            //     required: true
-            // },
             isDisabled: false,
-            statusCode:"200"
+            statusCode:""
+            
         };
+        
     },
     mounted(){
         this.quizId = this.$route.params.id
         this.getQuiz()
+        
     },
 
     methods:{
@@ -44,14 +40,19 @@ export default{
             .then(data => {
                 this.statusCode = data.statusCode
                 this.quiz = data.quizList[0]
-                // this.questions = data.quizList[0].questions
                 this.questionList = data.quizList[0].questions
                 this.questionList = JSON.parse(this.questionList)//將字串轉回陣列
-                this.is_required = this.questionList[0].is_required
+                console.log(this.quiz)
+                this.questionList = this.questionList.map(question => {
+                return {
+                    ...question,
+                    answer: []
+                };
+                });
                 console.log(this.questionList)
             })
         },
-        fillin(){  
+        fillin(){
             const Obj = {
                 quiz_id: this.quizId,
                 name: this.name,
@@ -104,7 +105,9 @@ export default{
             this.phone = "",
             this.email = "",
             this.age = "",
-            this.fillinList = []
+            this.questionList.forEach(item =>{
+                item.answer = []
+            })
         },
         addClassToInputs() {
         const inputElements = this.$refs.inputContainer.querySelectorAll('input');
@@ -117,35 +120,42 @@ export default{
         inputElements.forEach(input => {
             input.classList.remove('form-control-plaintext');
         });
-        }
+        },
+        goBack() {
+            // 返回上一步
+            return this.$router.go(-1);
+        },
     },
     computed:{
         answerList(){
-            return this.questionList.map((question, index) => ({
+            return this.questionList.map((question) => ({
                 question_id : question.id,
                 question : question.title,
                 options : question.options,
-                answer : this.fillinList[index],
+                answer : Array.isArray(question.answer) ? question.answer.join(';') : question.answer,//將多選題填入的答案轉回資料庫需要的字串格式
                 type: question.type,
                 required: question.is_required
+                
             }));
-        } 
-        
-        
+        },
     }
-            
 }
 
 </script>
 <template>
-    
+    <div class="goback">
+        <img src="../components/svg/back.svg" @click="goBack()" alt="">
+    </div>
     <div class="container" ref="inputContainer">
         <span>{{ quiz.startDate +"~"+ quiz.endDate }}</span>
         <h1>{{ quiz.name }}</h1>
         <p>問卷描述: {{ quiz.description }}</p>
         <div class="mb-3">
-            <label for="userName" class="form-label ">姓名 (必填)</label>
-            <input type="text" v-model="name" class="form-control" id="userName" required :readonly="isDisabled">
+            <label for="userName" class="form-label">姓名 (必填)</label>
+            <input type="text" v-model="name" class="form-control" id="userName"  :readonly="isDisabled" required>
+            <div class="invalid-feedback">
+                請輸入姓名
+            </div>
         </div>
         <div class="mb-3">
             <label for="phone" class="form-label">手機 (必填)</label>
@@ -159,48 +169,56 @@ export default{
             <label for="age" class="form-label">年齡</label>
             <input type="number" v-model="age" min="13" class="form-control" id="age" :readonly="isDisabled">
         </div>
-        <div v-for="(question,index) in questionList" :key="index">
+        <div v-for="(question,index) in questionList" :key="index" class="row">
             <h3>{{ question.id + ". " + question.title }}
                 <span v-if="question.is_required" class="required">必填</span>
             </h3>
-            <div v-if="question.type === '單選題'">
+            <div v-if="question.type === '單選題'" class="col col-4">
                 <div v-for="(option, i) in question.options.split(';')" :key="i">
-                <input v-model="fillinList[index]" type="radio"  :value="option"   :name="'question_' + index" :disabled="isDisabled" 
+                <input v-model="question.answer" type="radio"  :value="option"   :name="'question_' + index" :disabled="isDisabled" 
                 :class="{'form-control-plaintext': isDisabled}" class="form-check-input">
                 <label :for="'question_' + index" class="form-check-label">{{ option }}</label>
                 </div>
             </div>
-            <div v-else-if="question.type === '多選題'">
+            <div v-else-if="question.type === '多選題'" class="col col-4">
                 <div v-for="(option, i) in question.options.split(';')" :key="i">
-                <input v-model="fillinList[index]" type="checkbox" :value="option" class="form-check-input" :name="'question_' + index" :disabled="isDisabled" 
+                <input type="checkbox" v-model="question.answer" :value="option"
+                class="form-check-input" :name="'question_' + index" :disabled="isDisabled" 
                 :class="{'form-control-plaintext': isDisabled}">
-                <label :for="'question_' + index" class="form-check-label">{{ option }}</label>
-                </div>
+                <label :for="'question_' + index">{{ option }}</label>
             </div>
-            <div v-else-if="question.type === '簡述題'">
-                <textarea v-model="fillinList[index]" :disabled="isDisabled" 
+            </div>
+            <div v-else-if="question.type === '簡述題'" class="col col-5">
+                <textarea v-model="question.answer" :disabled="isDisabled" 
                 :class="{'form-control-plaintext': isDisabled}" class="form-control"></textarea>
             </div>
             </div>
         <div class="flexbox">
             <div>
-            <button @click="enableInputs" class="btn-custom">修改作答</button>
-            <button @click="clearInputs(),enableInputs()" class="btn-custom">清除重填</button>
+                <button @click="enableInputs" class="btn-custom">修改作答</button>
+                <button @click="clearInputs(),enableInputs()" class="btn-custom">清除重填</button>
             </div>
-        <div>
-        <button v-if="!isDisabled" @click="disableInputs" class="btn-custom btn-submit">作答預覽</button>
-        <button v-else @click="fillin()" class="btn-custom btn-submit">送出問卷</button>
+            <div>
+                <button v-if="!isDisabled" @click="disableInputs" class="btn-custom btn-submit">作答預覽</button>
+                <button v-else @click="fillin()" class="btn-custom btn-submit">送出問卷</button>
             </div>
         </div>
-        
-        <!-- {{ fillinList }} -->
-    </div>
+</div>
 
 </template>
 
-<style scoped>
-.container{
-    padding: 5%;
+<style scoped lang="scss">
+.goback{
+    cursor: pointer;
+    transition: .3s ease;
+    position: absolute;
+    left: -5vw;
+    top: 10vh;
+    :hover{
+        // border: 1px solid black;
+        transform: scale(1.1);
+        transition: .3s;
+    }
 }
 .required{
     display: inline-block;
@@ -222,5 +240,12 @@ export default{
 }
 .btn-submit{
     margin-left: 15px;
+}
+.col{
+    margin-bottom: 2vh;
+}
+.row:hover{
+    background: var(--orange-soft);
+    border-radius: 5px;
 }
 </style>

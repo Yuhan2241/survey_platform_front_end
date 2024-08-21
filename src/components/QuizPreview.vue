@@ -4,38 +4,26 @@ export default{
         return {
             quiz: {},
             questionList: {},
-
+            quizDate:[]
         };
     },
     props:[
         'quizData', //問卷資料from AddOrEditQuiz
         'questions', //問題列表from AddOrEditQuiz
-        // 'fillinData' //填答內容(1筆)from ShowFeedback
+        'quizDate'
     ],
     emits: ['backToEdit', 'publishQuiz'],
     created(){
         this.quiz = {...this.quizData},
         this.questionList = {...this.questions}
-        // this.fillin = this.fillinData
     },
-    // watch:{
-    //     quizData(newVal) {
-    //         this.quiz = newVal;
-    //     },
-    //     questionList(newVal) {
-    //         this.questionList = newVal;
-    //     },
-    // fillinData(newVal) {
-    // this.fillin = newVal;
-    // }
-    // },
-    
 }
 
 </script>
 <template>
     <div class="container preview">
-        <span>{{ quiz.startDate +"~"+ quiz.endDate }}</span>
+            <span v-if="quizDate[0].length>10">{{ quizDate[0].toISOString().substring(0,10) +" ~ "+ quizDate[1].toISOString().substring(0,10) }}</span>
+            <span v-else>{{ quizDate[0] +" ~ "+ quizDate[1] }}</span>
         <h1>{{ quiz.name }}</h1>
         <p>問卷描述: {{ quiz.description }}</p>
         <div>

@@ -1,38 +1,59 @@
 <script>
 export default {
-    setup() {
-        
+    data() {
+        return{
+
+        }
     },
+    
 }
 </script>
 
 <template>
-    <nav class="navbar navbar-light fixed-top">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-        <a class="navbar-brand" href="#">問卷平台</a>
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">問卷平台</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-            <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            </ul>
-            <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-        </div>
-        </div>
-    </div>
-</nav>
+    <nav >
+        <h3>問卷平台</h3>
+        <RouterLink  to="/" :key="$route.fullPath">Home</RouterLink>
+        <RouterLink  to="/frontPage" :key="$route.fullPath">填寫問卷</RouterLink>
+        <RouterLink to="/manageQuizPage" :key="$route.fullPath">後台管理</RouterLink>
+        <RouterLink to="/addQuiz">新增問卷</RouterLink>
+        <slot></slot>
+    </nav>
 </template>
+
+<style lang="scss" scoped>
+nav {
+    width: 15vw;
+    height: 100dvh;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: var(--blue-dark);
+}
+
+h3{
+    padding: 1rem;
+    color: #fff;
+}
+
+nav a.router-link-exact-active {
+    color: var(--black);
+    background-color: var(--blue);
+}
+
+nav a:hover {
+    color: var(--color-text);
+    background-color: var(--blue);
+}
+
+nav a {
+    display: block;
+    padding: 1rem;
+    border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+    border: 0;
+}
+
+</style>

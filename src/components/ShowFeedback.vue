@@ -15,7 +15,7 @@ export default{
     },
     created(){
         this.showFeedback()
-        
+
         // this.quiz = this.quizDetail
     },
     methods:{
@@ -81,7 +81,7 @@ export default{
         },
     },
     components:{
-        FeedbackPreview
+        FeedbackPreview,
     },
     computed: {
         //取出每頁所需要的項目

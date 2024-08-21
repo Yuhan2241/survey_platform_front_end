@@ -6,7 +6,8 @@ export default {
         return{
             quizId:'',
             quizName:'',
-            chartData:{}
+            chartData:{},
+            textAnswer:{}
         }
     },
     components:{
@@ -31,7 +32,8 @@ export default {
             .then(data => {
                 this.chartData = data.countMap
                 this.quizName = data.quizName
-                console.log(data.countMap)
+                this.textAnswer = data.textAnswer
+                console.log(this.textAnswer)
             })
         },
         
@@ -40,17 +42,29 @@ export default {
 </script>
 
 <template>
-    <span>即時統計結果</span>
+    <div class="container">
+        <span>即時統計結果</span>
     <h1>{{ quizName }}</h1>
-    <div v-for="(data, id) in chartData" :key="id" :chartData="data" >
-        <!-- {{id}} -->
-    <StatisticsChart :chartData="data" :chartName="id">
-    </StatisticsChart>
+    <div v-for="(data, id) in chartData" :key="id" :chartData="data">
+        <p class="h4"><strong>{{ id }}</strong></p>
+        <StatisticsChart :chartData="data" :chartName="id">
+        </StatisticsChart>
     </div>
-    <slot></slot>
+    <div>
+        <div v-for="(answers, question) in textAnswer" :key="question">
+        <p class="h4"><strong>{{ question }}</strong></p>
+        <p v-for="answer in answers" :key="answer" class="col-5 bg-light border rounded">{{ answer }}</p>
+        </div>
+        <!-- {{ Object.values(textAnswer) }} -->
+    </div>
+    
+    </div>
     
 </template>
 
 <style scoped>
-
+.row{
+    width: 50%;
+    margin-left: 2vw;
+}
 </style>

@@ -18,12 +18,20 @@ export default{
     props:[
         'id'
     ],
-    
+    methods:{
+        goBack() {
+            // 返回上一步
+            return this.$router.go(-1);
+        },
+    }
     
 }
 </script>
 
 <template>
+    <div class="goback">
+        <img src="../components/svg/back.svg" @click="goBack()" alt="">
+    </div>
     <div class="options" v-if="this.$route.params.id">
         <!-- 前往問卷編輯頁 -->
         <label class="label" for="change" :class="{checked : changeForm === 'quizContext'}">問卷編輯</label>
@@ -33,30 +41,42 @@ export default{
         <label class="label" for="statistics" :class="{checked : changeForm === 'statistics'}">統計</label>
         <input type="radio" v-model="changeForm" value="statistics" id="statistics" >
     </div>
-    <div v-show="changeForm == 'quizContext'">
+    <div class="view">
+        <div v-show="changeForm == 'quizContext'">
         <AddOrEditQuizVue/>
+        </div>
+        <div v-show="changeForm == 'feedback'">
+            <ShowFeedback/>
+        </div>
+        <div v-show="changeForm == 'statistics'">
+            <Statistics/>
+        </div>
     </div>
-    <div v-show="changeForm == 'feedback'">
-        <ShowFeedback/>
-    </div>
-    <div v-show="changeForm == 'statistics'" class="container">
-        <Statistics/>
-    </div>
+    
 </template>
 
 <style scoped lang="scss">
+.goback{
+    cursor: pointer;
+    transition: .3s ease;
+    position: absolute;
+    left: -5vw;
+    top: 5vh;
+    :hover{
+        // border: 1px solid black;
+        transform: scale(1.1);
+        transition: .3s;
+    }
+}
 input{
         display: none;
     }
-.options{
-    margin-left: 10vw;
-    margin-top: 5vh;
-}
+
 .label{
         border-radius: 5px 20px 0 0;
         background: #86BBD8;
         margin-right:  1px;
-        padding: 10px 3%;
+        padding: 10px 5%;
         color: #fff;
         display: inline-block;
     }
@@ -65,5 +85,16 @@ input{
         border-bottom: none;
         color: var(--color-text);
     }
-    
+    .view{
+        position: absolute;
+        top: 10vh;
+    }
+    .options{
+        width: 40vw;
+    // margin-left: 10vw;
+    margin-top: 10vh;
+    position: relative;
+    left: 3vh;
+    z-index: 5;
+    }
 </style>

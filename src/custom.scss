@@ -1749,8 +1749,14 @@ $nested-kbd-font-weight:            null !default; // Deprecated in v5.2.0, remo
 
 $pre-color:                         null !default;
 
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
 body {
-    min-height: 100vh;
+    height: 100dvh;
     color: var(--color-text);
     background: var(--color-background);
     transition:
@@ -1765,21 +1771,29 @@ body {
         'Droid Sans',
         'Helvetica Neue',
         sans-serif;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     text-rendering: optimizeLegibility;
     display: flex;
-    width: 100dvw;
-    flex-direction: column;
+    // width: 100vw;
+    // flex-direction: column;
 }
 .container{
     background-color: #ffff;
-    width: 75vw;
-    height: auto;
-    margin-bottom: 5%;
-    padding: 5% 10%;
+    width: 70vw;
+    // height: auto;
+    margin: 5% 0;
+    padding: 5% 3%;
     border-radius: 15px;
 }
+// @mixin make-container($padding-x: $container-padding-x) {
+//     background-color: #ffff;
+//     width: 100%;
+//     padding-right: 3%;
+//     padding-left: $padding-x;
+//     margin-right: auto;
+//     margin-left: auto;
+// }
 
 .btn-custom{
     width: 100px;
@@ -1800,9 +1814,9 @@ body {
     width: 50%;
     margin-bottom: 10px;
 }
-.form-check{
-    margin: 15px 0;
-}
+// .form-check{
+//     margin: 15px 0;
+// }
 .btn-submit{
     background-color: var(--blue-medium);
     color: white;

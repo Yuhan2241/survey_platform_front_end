@@ -1,5 +1,4 @@
 <script>
-
 import Swal from 'sweetalert2'
 export default{
     data(){
@@ -56,9 +55,6 @@ export default{
             }
             return pageList
         },
-        // selectedId(id){
-        //     this.selectedIdList.push(id)
-        // }
     },
     methods:{
         //搜尋問卷
@@ -156,7 +152,7 @@ export default{
             }
         },
         checkAllSelected() { 
-            if (this.selectedIdList.length === this.filteQuiz.length) {
+            if (this.selectedIdList.length === this.filteAndPaginateQuiz.length) {
                 this.allSelected = true;
             } else {
                 this.allSelected = false;
@@ -171,7 +167,7 @@ export default{
                 showCancelButton: true,
                 confirmButtonColor: "var(--red)",
                 cancelButtonColor: "#bdbcbc",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "刪除"
             }).then((result) => {
             if (result.isConfirmed) {
                 this.deleteQuiz()
@@ -183,14 +179,14 @@ export default{
                 }
                 setTimeout(function() {
                 location.reload();
-                }, 5000); //延遲5秒後刷新頁面
+                }, 2000); //延遲5秒後刷新頁面
         });
         }
     },
     watch:{
         allSelected(newVal) {
             if (newVal) {
-                this.selectedIdList = this.filteQuiz.map(item => item.id);
+                this.selectedIdList = this.filteAndPaginateQuiz.map(item => item.id);
             } else {
                 this.selectedIdList = [];
             }
@@ -200,34 +196,35 @@ export default{
 </script>
 
 <template>
-    
     <div class="search container">
-        <div>
+        <div >
             <label for="searchName">搜尋問卷</label>
-            <input type="search" v-model="name" placeholder="請輸入問卷名稱" id="searchName" class="form-control form-control-sm">
+            <input type="search" v-model="name" placeholder="輸入問卷名稱" id="searchName" class="form-control form-control-sm">
         </div>
-        <div>
+        <div class="searchItem">
             <label for="start">開始時間</label>
-            <label for="end"> ~ 結束時間</label>
-            <input type="date"  v-model="startDate" name="" id="start" class="form-control input-short form-control-sm">
-            <input type="date" v-model="endDate" name="" id="end" class="form-control input-short form-control-sm form-check-inline">
-            <button type="submit" @click="getQuiz()" class="btn  btn-outline-secondary sm"><img src="../components/svg/search.svg" alt=""></button>
+            <input type="date"  v-model="startDate" name="" id="start" class="form-control form-control-sm">
+            <label for="end">結束時間</label>
+            <input type="date" v-model="endDate" name="" id="end" class="form-control form-control-sm form-check-inline">
         </div>
-    
-        <div>
-            <div v-for="status in statuses" :key="status" class="form-check form-check-inline">
+        <button type="submit" @click="getQuiz()" title="搜尋" class="btn btn-outline-secondary btn-sm"><img src="../components/svg/search.svg" alt=""></button>
+    </div>
+    <div class="container">
+        <div class="col">
+            <a @click="deleteAlert()" title="刪除" class="btn btn-outline-danger"><img src="../components/svg/delete.svg" alt=""></a>
+        <RouterLink to="/addQuiz" title="新增問卷" class="btn btn-light"><img src="../components/svg/addQuiz.svg" alt=""></RouterLink>
+        
+        
+        <span>篩選:</span>
+        <div v-for="status in statuses" :key="status" class="form-check form-check-inline">
                 <input type="checkbox" :id="status" :value="status" v-model="selectedStatuses" class="btn-check">
                 <label :for="status" class="btn btn-outline-secondary">{{ status }}</label>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <a @click="deleteAlert()" class="btn btn-outline-danger"><img src="../components/svg/delete.svg" alt=""></a>
-        <RouterLink to="/addQuiz" class="btn btn-light"><img src="../components/svg/create.svg" alt=""></RouterLink>
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th><input type="checkbox" v-model="allSelected"></th>
+                    <th><input  type="checkbox" v-model="allSelected"></th>
                     <th>NO.</th>
                     <th>標題</th>
                     <th>狀態</th>
@@ -237,8 +234,8 @@ export default{
                 </tr>
             </thead>
             <tbody>
-                <tr class="tr" v-for="quiz in filteAndPaginateQuiz" :key="quiz.id">
-                    <td><input type="checkbox" :value="quiz.id" v-model="selectedIdList" @change="checkAllSelected"></td>
+                <tr class="tr"  v-for="quiz in filteAndPaginateQuiz" :key="quiz.id">
+                    <td><input :disabled="quizStatus(quiz).status == '開放中'" type="checkbox" :value="quiz.id" v-model="selectedIdList" @change="checkAllSelected"></td>
                     <td>{{ quiz.id }}</td>
                     <td><router-link :to="`/quizPage/${quiz.id}`" class="link-text">{{ quiz.name }}</router-link></td>
                     <td>
@@ -249,7 +246,7 @@ export default{
                     <td>{{quiz.startDate}}</td>
                     <td>{{quiz.endDate}}</td>
                     <td><router-link :to="`/Statistics/${quiz.id}`">
-                        <img v-if="quizStatus(quiz).status !== '尚未開始' && quizStatus(quiz).status !== '未發布'" src="../components/svg/watch.svg" alt="">
+                        <img v-if="quizStatus(quiz).status !== '尚未開始' && quizStatus(quiz).status !== '未發布'" src="../components/svg/watch.svg" class="watch">
                     </router-link></td>
                 </tr>
             </tbody>
@@ -266,11 +263,45 @@ export default{
 </template>
 
 <style scoped lang="scss">
-    table{  
-        border-collapse: collapse;
+    .col{
+        width: 100%;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
     }
+    .search{
+        width: 13vw;
+        margin: 0;
+        padding: 10px;
+        position: fixed;
+        left: 1vw;
+        bottom: 5vh;
+        border-radius: 5px;
+        background: transparent;
+        color: #fff;
+    }
+    .searchItem{
+        margin-top: 15px;
+    }
+    .btn-sm{
+        margin-top: 20px;
+        background: #fff;
+    }
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5%;
+    }
+    th:nth-child(2), td:nth-child(2) { width: 5%; }
+    th:nth-child(3), td:nth-child(3) { width: 30%; }
+    th:nth-child(4), td:nth-child(4) { width: 20%; }
+    th:nth-child(7), td:nth-child(7) { width: 5%; }
     td{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         border-top: 1px solid black;
+        align-content: baseline;
     }
 
     .active{
@@ -300,12 +331,13 @@ export default{
     .notPublished{
         background-color: var(--grey);
     }
-    .sm{
-        scale: .80;
+    .pagination{
+        margin-top: 5%;
     }
-    .container{
-        margin-top: 5vh;
-        padding: 5%;
+    .btn-light{
+        border: 1px solid gray;
     }
-
+    .watch{
+        scale: 0.8;
+    }
 </style>
