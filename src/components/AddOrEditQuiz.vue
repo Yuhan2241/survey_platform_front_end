@@ -76,7 +76,7 @@ export default{
             let Obj={
                 quizId : this.quizId
             }
-            fetch("http://localhost:8080/quiz/search",{
+            fetch("http://localhost:8080/quiz/search1",{
                 method:'POST',
                 headers:{
                     "Content-Type":"application/json"

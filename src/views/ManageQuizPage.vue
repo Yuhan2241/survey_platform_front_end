@@ -64,7 +64,7 @@ export default{
                 start_date : this.startDate,
                 end_date : this.endDate,
             }
-            fetch("http://localhost:8080/quiz/search",{
+            fetch("http://localhost:8080/quiz/search1",{
                 method:'POST',
                 headers:{
                     "Content-Type":"application/json"
